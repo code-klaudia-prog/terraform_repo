@@ -8,9 +8,12 @@ terraform {
   }
 }
 
-# Configure o provedor Azure
 provider "azurerm" {
   features {}
+  subscription_id = "615c8b72-88d7-44d5-8f42-66370abbcb05"
+  client_id       = "21dff811-9fc7-4ba3-8a65-3d701b75cc23"
+  client_secret   = "6d90e861-67e5-4729-9735-919144bb770a"
+  tenant_id       = "fec9a3b0-dce5-4ee9-a086-fe9cd205cc62"
 }
 
 # Create a resource group
