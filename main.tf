@@ -1,4 +1,3 @@
-# We strongly recommend using the required_providers block to set the
 # Azure Provider source and version being used
 terraform {
   required_providers {
@@ -9,10 +8,15 @@ terraform {
   }
 }
 
+# Configure o provedor Azure
+provider "azurerm" {
+  features {}
+}
+
 # Create a resource group
 resource "azurerm_resource_group" "example" {
-  name     = "example-resources"
-  location = "West Europe"
+  name      = "example-resources"
+  location  = "West Europe"
 }
 
 # Create a virtual network within the resource group
