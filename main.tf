@@ -21,7 +21,7 @@ resource "azurerm_resource_group" "example" {
 # Service Plan Resource is missing for now. Let's test if we can deloy the reources below without a Service Plan
 
 resource "azurerm_storage_account" "example" {
-  name                     = "claudia_test_storage_account"
+  name                     = "claudiateststorageaccount"
   resource_group_name      = azurerm_resource_group.example.name
   location                 = azurerm_resource_group.example.location
   account_tier             = "Standard"
@@ -29,7 +29,7 @@ resource "azurerm_storage_account" "example" {
 }
 
 resource "azurerm_service_plan" "example" {
-  name                = "claudia_test_app_service_plan"
+  name                = "claudiatestappservice_plan"
   resource_group_name = azurerm_resource_group.example.name
   location            = azurerm_resource_group.example.location
   os_type             = "Windows"
@@ -37,7 +37,7 @@ resource "azurerm_service_plan" "example" {
 }
 
 resource "azurerm_windows_function_app" "example" {
-  name                = "claudia_test_function_app"
+  name                = "claudiatestfunctionapp"
   resource_group_name = azurerm_resource_group.example.name
   location            = azurerm_resource_group.example.location
 
