@@ -18,7 +18,7 @@ resource "azurerm_resource_group" "example" {
   location  = "West Europe"
 }
 
-# Service Plan Resource is missing for now. Let's test if we can deloy the reources below without a Service Plan
+# Service Plan Resource
 
 resource "azurerm_storage_account" "example" {
   name                     = "claudiastacc"
