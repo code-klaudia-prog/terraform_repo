@@ -18,24 +18,6 @@ resource "azurerm_resource_group" "example" {
   location  = "West Europe"
 }
 
-# Service Plan Resource
-
-resource "azurerm_storage_account" "example" {
-  name                     = "claudiastacc"
-  resource_group_name      = azurerm_resource_group.example.name
-  location                 = azurerm_resource_group.example.location
-  account_tier             = "Standard"
-  account_replication_type = "LRS"
-}
-
-resource "azurerm_service_plan" "example" {
-  name                = "clauservplan"
-  resource_group_name = azurerm_resource_group.example.name
-  location            = azurerm_resource_group.example.location
-  os_type             = "Windows"
-  sku_name            = "Y1"
-}
-
 resource "azurerm_windows_function_app" "example" {
   name                = "claufuncapp"
   resource_group_name = azurerm_resource_group.example.name
