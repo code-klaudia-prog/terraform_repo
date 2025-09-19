@@ -18,37 +18,39 @@ resource "azurerm_resource_group" "example" {
   location  = "West Europe"
 }
 
-# --- Módulo de Rede ---
-module "network" {
-  source              = "./modules/network"
-  resource_group_name = azurerm_resource_group.main.name
-  location            = azurerm_resource_group.main.location
-  vnet_name           = "meu-vnet-producao"
-  vnet_address_space  = ["10.0.0.0/16"]
-  frontend_subnet_name = "frontend-subnet"
-  backend_subnet_name  = "backend-subnet"
-  database_subnet_name = "database-subnet"
+provider "azurerm" {
+  features {}
 }
 
-# --- Módulo de Banco de Dados ---
-module "database" {
-  source               = "./modules/database"
-  resource_group_name  = azurerm_resource_group.main.name
-  location             = azurerm_resource_group.main.location
-  vnet_id              = module.network.vnet_id
-  database_subnet_id   = module.network.database_subnet_id
-  postgres_server_name = "meu-db-server"
-  postgres_db_name     = "meu-db-app"
+resource "azurerm_resource_group" "example" {
+  name     = "example-resources"
+  location = "West Europe"
 }
 
-# --- Módulo de App Services e Application Gateway ---
-module "app_services" {
-  source                = "./modules/app_services"
-  resource_group_name   = azurerm_resource_group.main.name
-  location              = azurerm_resource_group.main.location
-  vnet_id               = module.network.vnet_id
-  frontend_subnet_id    = module.network.frontend_subnet_id
-  backend_subnet_id     = module.network.backend_subnet_id
-  app_gateway_subnet_id = module.network.app_gateway_subnet_id
-  database_server_name  = module.database.postgres_server_name
+resource "azurerm_storage_account" "example" {
+  name                     = "windowsfunctionappsa"
+  resource_group_name      = azurerm_resource_group.example.name
+  location                 = azurerm_resource_group.example.location
+  account_tier             = "Standard"
+  account_replication_type = "LRS"
+}
+
+resource "azurerm_service_plan" "example" {
+  name                = "example-app-service-plan"
+  resource_group_name = azurerm_resource_group.example.name
+  location            = azurerm_resource_group.example.location
+  os_type             = "Windows"
+  sku_name            = "Y1"
+}
+
+resource "azurerm_windows_function_app" "example" {
+  name                = "example-windows-function-app"
+  resource_group_name = azurerm_resource_group.example.name
+  location            = azurerm_resource_group.example.location
+
+  storage_account_name       = azurerm_storage_account.example.name
+  storage_account_access_key = azurerm_storage_account.example.primary_access_key
+  service_plan_id            = azurerm_service_plan.example.id
+
+  site_config {}
 }
