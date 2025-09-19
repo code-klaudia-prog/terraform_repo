@@ -18,10 +18,10 @@ resource "azurerm_resource_group" "example" {
   location  = "West Europe"
 }
 
-resource "azurerm_windows_function_app" "example" {
-  name                = "claufuncapp"
+resource "azurerm_service_plan" "example" {
+  name                = "servplanklau"
   resource_group_name = azurerm_resource_group.example.name
   location            = azurerm_resource_group.example.location
-
-  site_config {}
+  os_type             = "Windows"
+  sku_name            = "Y1"
 }
