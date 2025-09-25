@@ -12,9 +12,9 @@ resource "aws_elastic_beanstalk_application" "my_application" {
 
 # Cria um ambiente Elastic Beanstalk para a aplicação
 resource "aws_elastic_beanstalk_environment" "my_environment" {
-  name                = "my-terraform-env"
+  name                = "envclaudia"
   application         = aws_elastic_beanstalk_application.my_application.name
-  solution_stack_name = "64bit Windows Server Core 2025 v2.20.0 running IIS 10.0"# Exemplo de stack. Você pode alterá-lo.
+  solution_stack_name = "64bit Amazon Linux 2016.03 v2.1.0 running Multi-container Docker 1.9.1 (Generic)"# Exemplo de stack. Você pode alterá-lo.
 
   # Configurações do ambiente
   setting {
