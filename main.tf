@@ -10,14 +10,16 @@ resource "aws_elastic_beanstalk_application" "my_application" {
   description = "Aplicação de exemplo criada com Terraform"
 }
 
-# Cria um ambiente Elastic Beanstalk para a aplicação
-resource "aws_elastic_beanstalk_environment" "my_environment" {
-  name                = "envclaudia"
-  application         = aws_elastic_beanstalk_application.my_application.name
+resource "aws_elastic_beanstalk_application" "tftest" {
+  name        = "tf-test-name"
+  description = "tf-test-desc"
+}
 
 
-
-  # Configurações do ambiente
+resource "aws_elastic_beanstalk_environment" "docker-env" {
+  name                = "Docker-env3"
+  application         = aws_elastic_beanstalk_application.docker-app.name
+  solution_stack_name = "64bit Amazon Linux 2 v3.4.3 running Docker"
   setting {
     namespace = "aws:autoscaling:launchconfiguration"
     name      = "InstanceType"
