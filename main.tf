@@ -6,7 +6,7 @@ provider "aws" {
 
 # Cria uma aplicação Elastic Beanstalk
 resource "aws_elastic_beanstalk_application" "my_application" {
-  name        = "my-terraform-app"
+  name        = "claudiaapp"
   description = "Aplicação de exemplo criada com Terraform"
 }
 
@@ -14,7 +14,9 @@ resource "aws_elastic_beanstalk_application" "my_application" {
 resource "aws_elastic_beanstalk_environment" "my_environment" {
   name                = "envclaudia"
   application         = aws_elastic_beanstalk_application.my_application.name
-  solution_stack_name = "64bit Amazon Linux 2023 running Node.js 22"   "# Exemplo de stack. Você pode alterá-lo.
+  solution_stack_name = "64bit Amazon Linux 2023 running Node.js 22" 
+
+
 
   # Configurações do ambiente
   setting {
