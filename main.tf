@@ -13,7 +13,7 @@ resource "aws_elastic_beanstalk_application" "my_application" {
 resource "aws_elastic_beanstalk_environment" "docker-env" {
   name                = "Docker-env3"
   application         = aws_elastic_beanstalk_application.my_application.name
-  solution_stack_name = "64bit Amazon Linux 2 v3.4.3 running Docker"
+  solution_stack_name = "64bit Amazon Linux 2 v3.1.2 running PHP 7.3"
 
   setting {
     namespace = "aws:autoscaling:launchconfiguration"
