@@ -3,24 +3,12 @@ resource "aws_elastic_beanstalk_application" "eb_appl" {
   description = "Abhishek Kothari has built this application"
 }
 
-resource "aws_s3_bucket" "default" {
-  bucket = "starkreality-app-version"
-}
-
-resource "aws_s3_bucket_object" "default" {
-  bucket = aws_s3_bucket.default.id
-  key    = "beanstalk/php-webapp.zip"
-  source = "webapp.zip"
-}
-
-
 resource "aws_elastic_beanstalk_application_version" "default" {
   name        = var.app_version
   application = var.eb_app_name
   description = "application version created by terraform"
-  bucket      = aws_s3_bucket.default.id
-  key         = aws_s3_bucket_object.default.id
 }
+
 resource "aws_default_vpc" "default" {
   tags = {
     Name = "Default VPC"
@@ -78,12 +66,6 @@ resource "aws_elastic_beanstalk_configuration_template" "tf_template" {
       namespace = "aws:elasticbeanstalk:environment"
       name = "EnvironmentType"
       value = "LoadBalanced"
-  }
-
-  setting {
-      namespace = "aws:autoscaling:launchconfiguration"
-      name = "IamInstanceProfile"
-      value = aws_iam_instance_profile.elastic_beanstalk_ec2_profile.arn
   }
 }
 
