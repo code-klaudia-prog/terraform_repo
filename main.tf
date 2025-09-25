@@ -24,8 +24,8 @@ data "aws_subnets" "default_subs" {
 resource "aws_elastic_beanstalk_configuration_template" "tf_template" {
   name                = "tf-test-template-config"
   application         = aws_elastic_beanstalk_application.eb_appl.name
-  solution_stack_name = "32bit Amazon Linux running Tomcat 7"
-  setting {
+  solution_stack_name = "
+  setting {Python 3.13 running on 64bit Amazon Linux 2023/4.7.2"
     namespace = "aws:ec2:vpc"
     name      = "VPCId"
     value     = aws_default_vpc.default.id
