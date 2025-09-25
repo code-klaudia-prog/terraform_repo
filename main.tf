@@ -4,24 +4,6 @@ terraform {
   }
 }
 
-variable "most_recent" {
-  description = "(optional)"
-  type        = bool
-  default     = null
-}
-
-variable "name_regex" {
-  description = "(required)"
-  type        = string
-}
-
-data "aws_elastic_beanstalk_solution_stack" "this" {
-  # most_recent - (optional) is a type of bool
-  most_recent = var.most_recent
-  # name_regex - (required) is a type of string
-  name_regex = var.name_regex
-}
-
 resource "aws_elastic_beanstalk_application" "eb_appl" {
   name        = var.eb_app_name
   description = "Claudia has built this application"
