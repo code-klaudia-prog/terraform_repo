@@ -5,7 +5,7 @@ provider "aws" {
 
 resource "aws_elastic_beanstalk_application" "eb_appl" {
   name        = var.eb_app_name
-  description = "Abhishek Kothari has built this application"
+  description = "Claudia has built this application"
 }
 
 resource "aws_default_vpc" "default" {
@@ -24,7 +24,7 @@ data "aws_subnets" "default_subs" {
 resource "aws_elastic_beanstalk_configuration_template" "tf_template" {
   name                = "tf-test-template-config"
   application         = aws_elastic_beanstalk_application.eb_appl.name
-  solution_stack_name = var.eb_stack[var.techstack]
+  solution_stack_name = "64bit Amazon Linux 2018.03 v2.27.0 running Multi-container Docker 20.10.7-ce (Generic)"
   setting {
     namespace = "aws:ec2:vpc"
     name      = "VPCId"
