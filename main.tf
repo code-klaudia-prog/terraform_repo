@@ -1,6 +1,25 @@
-# Define o provedor AWS
-provider "aws" {
-  region = "us-east-1"  # Região onde os recursos serão criados
+terraform {
+  required_providers {
+    aws = ">= 3.35.0"
+  }
+}
+
+variable "most_recent" {
+  description = "(optional)"
+  type        = bool
+  default     = null
+}
+
+variable "name_regex" {
+  description = "(required)"
+  type        = string
+}
+
+data "aws_elastic_beanstalk_solution_stack" "this" {
+  # most_recent - (optional) is a type of bool
+  most_recent = var.most_recent
+  # name_regex - (required) is a type of string
+  name_regex = var.name_regex
 }
 
 resource "aws_elastic_beanstalk_application" "eb_appl" {
@@ -24,7 +43,7 @@ data "aws_subnets" "default_subs" {
 resource "aws_elastic_beanstalk_configuration_template" "tf_template" {
   name                = "tf-test-template-config"
   application         = aws_elastic_beanstalk_application.eb_appl.name
-  solution_stack_name = "64bit Amazon Linux 2023 running Python 3.13"
+  solution_stack_name = null
   setting {
     namespace = "aws:ec2:vpc"
     name      = "VPCId"
