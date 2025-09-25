@@ -8,7 +8,9 @@ terraform {
 }
 
 provider "aws" {
-  region     = "us-east-1"
+   access_key = "var.AWS_ACCESS_KEY"
+   secret_key = "var.AWS_SECRET_KEY"
+   region = "eu-west-1"
 }
 
 resource "awscc_elasticbeanstalk_application" "example" {
