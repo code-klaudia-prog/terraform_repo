@@ -14,7 +14,7 @@ resource "aws_elastic_beanstalk_application" "my_application" {
 resource "aws_elastic_beanstalk_environment" "my_environment" {
   name                = "my-terraform-env"
   application         = aws_elastic_beanstalk_application.my_application.name
-  solution_stack_name = "64bit Amazon Linux 2 v3.1.1" # Exemplo de stack. Você pode alterá-lo.
+  solution_stack_name = "64bit Windows Server 2019 v2.5.8 running IIS 10.0"# Exemplo de stack. Você pode alterá-lo.
 
   # Configurações do ambiente
   setting {
