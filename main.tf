@@ -1,3 +1,7 @@
+provider "aws" {
+  region = "us-east-1"
+}
+
 resource "awscc_elasticbeanstalk_application" "example" {
   application_name = "example"
   description      = "example"
