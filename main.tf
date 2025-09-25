@@ -1,12 +1,6 @@
 resource "aws_elastic_beanstalk_application" "eb_appl" {
   name        = var.eb_app_name
   description = "Abhishek Kothari has built this application"
-
-  appversion_lifecycle {
-    service_role          = aws_iam_role.elastic_beanstalk_ec2_role.arn
-    max_count             = 128
-    delete_source_from_s3 = true
-  }
 }
 
 resource "aws_s3_bucket" "default" {
