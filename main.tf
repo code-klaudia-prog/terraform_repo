@@ -1,16 +1,19 @@
-
-# Define o provedor AWS
 provider "aws" {
+  alias  = "us_east_1"
   region = "us-east-1"
 }
 
-resource "aws_elastic_beanstalk_application" "tftest" {
-  name        = "tf-test-name"
-  description = "tf-test-desc"
+module "my_site" {
+  # Available inputs: https://github.com/futurice/terraform-utils/tree/master/aws_static_site#inputs
+  # Check for updates: https://github.com/futurice/terraform-utils/compare/v11.0...master
+  source = "git::ssh://git@github.com/futurice/terraform-utils.git//aws_static_site?ref=v11.0"
+
+  site_domain = "hello.example.com"
 }
 
-resource "aws_elastic_beanstalk_environment" "tfenvtest" {
-  name                = "tf-test-name"
-  application         = aws_elastic_beanstalk_application.tftest.name
-  solution_stack_name = "64bit Amazon Linux 2015.03 v2.0.3 running Go 1.4"
+resource "aws_s3_bucket_object" "my_index" {
+  bucket       = "${module.my_site.bucket_name}"
+  key          = "index.html"
+  content      = "<pre>Hello World!</pre>"
+  content_type = "text/html; charset=utf-8"
 }
