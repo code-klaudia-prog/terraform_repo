@@ -1,7 +1,7 @@
 provider "aws" {
-  region = "us-west-1"
-  access_key = AWS_ACCESS_KEY_ID
-  secret_key = AWS_SECRET_ACCESS_KEY
+  access_key = "${var.aws_access_key}"
+  secret_key = "${var.aws_secret_key}"
+  region     = "us-east-1"
 }
 
 resource "awscc_elasticbeanstalk_application" "example" {
