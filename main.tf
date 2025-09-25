@@ -1,5 +1,4 @@
 provider "aws" {
-  alias  = "us_east_1"
   region = "us-east-1"
 }
 
@@ -7,6 +6,7 @@ resource "awscc_elasticbeanstalk_application" "example" {
   application_name = "example"
   description      = "example"
 }
+
 resource "awscc_elasticbeanstalk_configuration_template" "example" {
   application_name    = awscc_elasticbeanstalk_application.example.application_name
   description         = "My sample configuration template"
