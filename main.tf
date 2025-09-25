@@ -3,12 +3,6 @@ resource "aws_elastic_beanstalk_application" "eb_appl" {
   description = "Abhishek Kothari has built this application"
 }
 
-resource "aws_elastic_beanstalk_application_version" "default" {
-  name        = var.app_version
-  application = var.eb_app_name
-  description = "application version created by terraform"
-}
-
 resource "aws_default_vpc" "default" {
   tags = {
     Name = "Default VPC"
