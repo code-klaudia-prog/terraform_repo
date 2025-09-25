@@ -4,7 +4,7 @@ provider "aws" {
 }
 
 resource "aws_s3_bucket_object" "my_index" {
-  bucket       = "${module.my_site.bucket_name}"
+  bucket       = "blabla"
   key          = "index.html"
   content      = "<pre>Hello World!</pre>"
   content_type = "text/html; charset=utf-8"
