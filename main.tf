@@ -1,9 +1,13 @@
 terraform {
   required_providers {
     aws = ">= 3.35.0"
-    region = "us-east-1"
   }
 }
+
+provider "aws" {
+  region = "us-east-1"
+}
+
 
 resource "aws_elastic_beanstalk_application" "eb_appl" {
   name        = var.eb_app_name
