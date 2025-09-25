@@ -1,48 +1,42 @@
-# Azure Provider source and version being used
-terraform {
-  required_providers {
-    azurerm = {
-      source  = "hashicorp/azurerm"
-      version = "=3.0.0"
-    }
+
+# Define o provedor AWS
+provider "aws" {
+  region = "us-east-1"  # Região onde os recursos serão criados
+}
+
+# Cria uma aplicação Elastic Beanstalk
+resource "aws_elastic_beanstalk_application" "my_application" {
+  name        = "my-terraform-app"
+  description = "Aplicação de exemplo criada com Terraform"
+}
+
+# Cria um ambiente Elastic Beanstalk para a aplicação
+resource "aws_elastic_beanstalk_environment" "my_environment" {
+  name                = "my-terraform-env"
+  application         = aws_elastic_beanstalk_application.my_application.name
+  solution_stack_name = "64bit Amazon Linux 2 v3.4.15 running Python 3.8" # Exemplo de stack. Você pode alterá-lo.
+
+  # Configurações do ambiente
+  setting {
+    namespace = "aws:autoscaling:launchconfiguration"
+    name      = "InstanceType"
+    value     = "t2.micro" # Exemplo de tipo de instância
+  }
+
+  setting {
+    namespace = "aws:autoscaling:asg"
+    name      = "MinSize"
+    value     = "1"
+  }
+
+  setting {
+    namespace = "aws:autoscaling:asg"
+    name      = "MaxSize"
+    value     = "1"
   }
 }
 
-provider "azurerm" {
-  features {}
+# Output para exibir o CNAME do ambiente após a criação
+output "environment_cname" {
+  value = aws_elastic_beanstalk_environment.my_environment.cname
 }
-
-# Create a resource group
-resource "azurerm_resource_group" "example" {
-  name      = "example-resources"
-  location  = "West Europe"
-}
-
-resource "azurerm_storage_account" "example" {
-  name                     = "stoact"
-  resource_group_name      = azurerm_resource_group.example.name
-  location                 = azurerm_resource_group.example.location
-  account_tier             = "Standard"
-  account_replication_type = "LRS"
-}
-
-resource "azurerm_service_plan" "example" {
-  name                = "svplan"
-  resource_group_name = azurerm_resource_group.example.name
-  location            = azurerm_resource_group.example.location
-  os_type             = "Windows"
-  sku_name            = "Y1"
-}
-
-resource "azurerm_windows_function_app" "example" {
-  name                = "funap"
-  resource_group_name = azurerm_resource_group.example.name
-  location            = azurerm_resource_group.example.location
-
-  storage_account_name       = azurerm_storage_account.example.name
-  storage_account_access_key = azurerm_storage_account.example.primary_access_key
-  service_plan_id            = azurerm_service_plan.example.id
-
-  site_config {}
-}
-
