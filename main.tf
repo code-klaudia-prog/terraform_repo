@@ -33,8 +33,3 @@ resource "aws_elastic_beanstalk_environment" "docker-env" {
     value     = "1"
   }
 }
-
-# Output para exibir o CNAME do ambiente após a criação
-output "environment_cname" {
-  value = aws_elastic_beanstalk_environment.my_environment.cname
-}
