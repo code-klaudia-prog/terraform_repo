@@ -1,15 +1,6 @@
-terraform {
-  required_providers {
-    aws = {
-      source  = "hashicorp/aws"
-      version = "~> 6.0"
-    }
-  }
-}
-
-# Create a VPC
-resource "aws_vpc" "example" {
-  cidr_block = "10.0.0.0/16"
+# Define o provedor AWS
+provider "aws" {
+  region = "us-east-1"  # Região onde os recursos serão criados
 }
 
 resource "aws_elastic_beanstalk_application" "eb_appl" {
