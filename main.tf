@@ -14,7 +14,6 @@ resource "aws_elastic_beanstalk_application" "my_application" {
 resource "aws_elastic_beanstalk_environment" "my_environment" {
   name                = "envclaudia"
   application         = aws_elastic_beanstalk_application.my_application.name
-  solution_stack_name = "64bit Amazon Linux 2 v3.3.9 running PHP 8.0"
 
 
 
