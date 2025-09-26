@@ -1,25 +1,38 @@
-variable "aws_region" {
-  description = "AWS region"
-  type        = string
-  default     = "us-west-2"
-}
+variable "region" {}
+
+variable "domain_name" {}
+
+variable "app_tags" {}
+
+variable "application_name" {}
+
+variable "vpc_id" {}
+
+variable "ec2_subnets" {}
+
+variable "elb_subnets" {}
+
+variable "instance_type" {}
+
+variable "disk_size" {}
+
+variable "keypair" {}
+
+variable "sshrestrict" {}
+
+variable "alarm_sns_topic" {}
+
 
 variable "creator" {
     description = "Name of creator"
     type = string
-    default = "datsabk"
+    default = "claudia"
 }
 
 variable "techstack" {
     description = "Choose your tech stack - php80, php74, java11, java8, tomcat85j11, tomcat85j8, go344, docker"
     type = string
     default = "php80"
-}
-
-variable "eb_app_name" {
-    description = "Elastic beanstalk application name"
-    type = string
-    default = "abk-tf-app"
 }
 
 variable "eb_env_name" {
@@ -48,3 +61,4 @@ variable "eb_stack" {
         docker = "64bit Amazon Linux 2 v3.4.10 running Docker"
     }
 }
+
