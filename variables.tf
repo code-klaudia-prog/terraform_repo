@@ -76,12 +76,9 @@ variable "keypair" {
   type = string
 }
 
-variable "certificate" {
-  type = string
-}
-
 variable "sshrestrict" {
   type = string
 }
+
 
 
