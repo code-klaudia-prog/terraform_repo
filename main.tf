@@ -33,8 +33,24 @@ resource "aws_elastic_beanstalk_environment" "beanstalkappenv" {
   application         = var.application_name
   solution_stack_name = "64bit Amazon Linux 2023 v4.7.2 running Python 3.11"
   setting {
-      namespace = "aws:autoscaling:launchconfiguration"
-      name      = "IamInstanceProfile"
-      value     =  "aws-elasticbeanstalk-ec2-role"
+    namespace = "aws:autoscaling:launchconfiguration"
+    name      = "IamInstanceProfile"
+    value     =  "aws-elasticbeanstalk-ec2-role"
   }
+  setting {
+    namespace = "aws:elasticbeanstalk:environment"
+    name      = "ServiceRole"
+    value     = "aws-elasticbeanstalk-service-role"
+  }
+  setting {
+    namespace = "aws:ec2:vpc"
+    name      = "AssociatePublicIpAddress"
+    value     =  "True"
+  }
+
+  setting {
+    namespace = "aws:autoscaling:launchconfiguration"
+    name      = "DisableIMDSv1"
+    value     = "true"
+  }  
  }
