@@ -31,5 +31,5 @@ resource "aws_elastic_beanstalk_application" "elasticapp" {
 resource "aws_elastic_beanstalk_environment" "beanstalkappenv" {
   name                ="${var.app_tags}-Api"
   application         = var.application_name
-  solution_stack_name = "64bit Amazon Linux 2 v3.8.4 running PHP 8.0"
+  solution_stack_name = "64bit Amazon Linux 2023 v4.7.2 running Python 3.11"
  }
