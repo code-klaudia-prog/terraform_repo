@@ -254,11 +254,6 @@ resource "aws_elastic_beanstalk_environment" "beanstalkappenv" {
    }
   setting {
       namespace = "aws:elbv2:listener:443"
-      name      = "SSLCertificateArns"
-      value     = var.certificate
-  }
-  setting {
-      namespace = "aws:elbv2:listener:443"
       name      = "SSLPolicy"
       value     = "ELBSecurityPolicy-2016-08"
     
