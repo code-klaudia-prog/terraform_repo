@@ -1,12 +1,22 @@
-required_providers {
+# Summary: Creates a simple Network Load Balancer and an ASG
+
+# Documentation: https://www.terraform.io/docs/language/settings/index.html
+terraform {
+  required_version = ">= 1.0.0"
+  required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = "~> 4.0"
+      version = "~> 3.38"
     }
   }
 }
 
-# Configure the AWS Provider
+# Documentation: https://www.terraform.io/docs/language/providers/requirements.html
 provider "aws" {
-  region = "eu-west-1"
+  region = "us-east-1"
+  default_tags {
+    tags = {
+      cs_terraform_examples = "aws_elb/network_elb"
+    }
+  }
 }
