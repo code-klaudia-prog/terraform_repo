@@ -28,13 +28,6 @@ resource "aws_elastic_beanstalk_application" "elasticapp" {
   name = var.application_name
 }
 
-data "aws_elastic_beanstalk_solution_stack" "php_latest" {
-  most_recent = true
-
-  name_regex = "^.*$"
-}
-
-
 resource "aws_elastic_beanstalk_environment" "beanstalkappenv" {
   name                ="${var.app_tags}-Api"
   application         = var.application_name
@@ -366,17 +359,4 @@ resource "aws_lb_listener" "https_redirect" {
       status_code = "HTTP_301"
     }
   }
-}
-
-data "aws_lb" "eb_lb" {
-  arn = aws_elastic_beanstalk_environment.beanstalkappenv.load_balancers[0]
-}
-
-resource "aws_security_group_rule" "allow_80" {
-  type              = "ingress"
-  from_port         = 80
-  to_port           = 80
-  protocol          = "tcp"
-  cidr_blocks       = ["0.0.0.0/0"]
-  security_group_id = tolist(data.aws_lb.eb_lb.security_groups)[0]
 }
