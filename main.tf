@@ -31,7 +31,7 @@ resource "aws_elastic_beanstalk_application" "elasticapp" {
 resource "aws_elastic_beanstalk_environment" "beanstalkappenv" {
   name                ="${var.app_tags}-Api"
   application         = var.application_name
-  solution_stack_name = "^.* $" 
+  solution_stack_name = "64bit Amazon Linux 2 v2.11.5 running .NET Core"
   tier                = "WebServer"
   tags = {
       APP_NAME = var.app_tags
