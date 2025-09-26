@@ -1,24 +1,6 @@
 variable "region" {}
 
-variable "domain_name" {}
-
-variable "app_tags" {}
-
-variable "application_name" {}
-
-variable "vpc_id" {}
-
-variable "ec2_subnets" {}
-
-variable "elb_subnets" {}
-
-variable "instance_type" {}
-
-variable "disk_size" {}
-
-variable "keypair" {}
-
-variable "sshrestrict" {}
+variable "domain_name" {} 
 
 variable "alarm_sns_topic" {}
 
@@ -61,4 +43,45 @@ variable "eb_stack" {
         docker = "64bit Amazon Linux 2 v3.4.10 running Docker"
     }
 }
+
+variable "app_tags" {
+  type = string
+}
+
+variable "application_name" {
+  type = string
+}
+
+variable "vpc_id" {
+  type = string
+}
+
+variable "ec2_subnets" {
+  type = string
+}
+
+variable "elb_subnets" {
+  type = list(string)
+}
+
+variable "instance_type" {
+  type = string
+}
+
+variable "disk_size" {
+  type = string
+}
+
+variable "keypair" {
+  type = string
+}
+
+variable "certificate" {
+  type = string
+}
+
+variable "sshrestrict" {
+  type = string
+}
+
 
