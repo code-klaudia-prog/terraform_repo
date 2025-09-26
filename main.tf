@@ -21,27 +21,29 @@ provider "aws" {
   }
 }
 
-# Documentation: https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/db_instance
-# Explanation: This resource creates the DB Instance. This Example creates a MySql Server version 5.7 as a Managed RDS Service.
-# Allocates a MySQl version 5.7 in a t3.micro instance with a database name 'changeme_simple_aws_db_instance', username 'changeme_username' and passwd 'changeme_password'
-resource "aws_db_instance" "changeme_simple_aws_db_instance" {
-  allocated_storage   = 5
-  engine              = "mysql"
-  engine_version      = "5.7"
-  instance_class      = "db.t3.micro"
-  name                = "changeme_simple_aws_db_instance"
-  username            = "changemeusername"
-  password            = "changeme_password"
-  skip_final_snapshot = true
+module "dns_and_ssl" {
+
+  source = "./modules/dns_and_ssl/"
+  
+  
+  domain_name                                           = var.domain_name
+  cname                                                 = module.eb.cname
+  zone                                                  = module.eb.zone
 }
 
-##Explanation:
-# Details on Arguments:
-# Required Argument -  allocated_storage: How Much storage will be allocated for the Database in Gbi
-# Required Argument -             engine: Engines Types like MySql, Postgres, MariaDB....
-# Required Argument -     engine_version: The above choosen version of Engine. For ex:  MySQL version 5.7
-# Required Argument -     instance_class: The size of the Instance (VM)
-# Required Argument -           username: The Master DB-User username
-# Required Argument -            passord: The master DB-User password
-# Optional Argument -               name: The Name of the Instance
-# Optional Argument -  skip_final_snapshot: It's needed for destroying the instance with Terraform Destroy
+module "eb" {
+
+  source = "./modules/beanstalk/"
+  
+  
+  app_tags                          = var.app_tags
+  application_name                  = var.application_name
+  vpc_id                            = var.vpc_id
+  ec2_subnets                       = var.ec2_subnets
+  elb_subnets                       = var.elb_subnets
+  instance_type                     = var.instance_type
+  disk_size                         = var.disk_size
+  keypair                           = var.keypair
+  sshrestrict                       = var.sshrestrict
+  certificate                       = module.dns_and_ssl.certificate
+}
