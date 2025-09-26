@@ -31,7 +31,7 @@ resource "aws_elastic_beanstalk_application" "elasticapp" {
 data "aws_elastic_beanstalk_solution_stack" "php_latest" {
   most_recent = true
 
-  name_regex = "^64bit Amazon Linux (.*) running PHP 8.0$"
+  name_regex = "^.*$"
 }
 
 
