@@ -38,7 +38,7 @@ data "aws_elastic_beanstalk_solution_stack" "php_latest" {
 resource "aws_elastic_beanstalk_environment" "beanstalkappenv" {
   name                ="${var.app_tags}-Api"
   application         = var.application_name
-  solution_stack_name = data.aws_elastic_beanstalk_solution_stack.php_latest.name
+  solution_stack_name = "^64bit Amazon Linux 2 v.* running PHP 8.0$" 
   tier                = "WebServer"
   tags = {
       APP_NAME = var.app_tags
