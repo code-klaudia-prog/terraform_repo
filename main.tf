@@ -24,7 +24,7 @@ provider "aws" {
 data "aws_elastic_beanstalk_hosted_zone" "current" {}
 
 
-resource "awsc_elasticbeanstalk_application" "example" {
+resource "aws_elasticbeanstalk_application" "example" {
   application_name = "Example-App"
   description      = "Example-App"
 }
