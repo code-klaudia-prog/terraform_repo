@@ -31,6 +31,10 @@ resource "aws_elastic_beanstalk_environment" "beanstalkappenv" {
     name      = "IamInstanceProfile"
     value     =  "aws-elasticbeanstalk-ec2-role"
   }
+  timeouts {
+    # Aumente o tempo limite para criação, por exemplo, para 40 ou 60 minutos
+    create = "40m" 
+  }
   setting {
     namespace = "aws:elasticbeanstalk:environment"
     name      = "ServiceRole"
