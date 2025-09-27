@@ -1,12 +1,9 @@
-# Summary: Create a simple AWS RDS DB Instance with MySQL
-
-# Documentation: https://www.terraform.io/docs/language/settings/index.html
 terraform {
-  required_version = ">= 1.0.0"
+  required_version = ">= 1.1.9"
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = "~> 3.38"
+      version = "~> 5.52.0"
     }
   }
 }
