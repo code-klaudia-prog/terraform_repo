@@ -26,7 +26,7 @@ resource "aws_elastic_beanstalk_environment" "beanstalkappenv" {
   name                ="${var.app_tags}-Api"
   application         = aws_elastic_beanstalk_application.example.name
   solution_stack_name = "64bit Amazon Linux 2023 v4.7.2 running Python 3.11"
- timeouts {
+  timeouts {
     # Aumente o tempo limite para criação, por exemplo, para 40 ou 60 minutos
     create = "40m" 
   }
