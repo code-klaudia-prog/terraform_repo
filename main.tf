@@ -22,6 +22,27 @@ resource "aws_elastic_beanstalk_application" "example" {
   description      = var.application_name
 }
 
+resource "aws_vpc" "minha_vpc" {
+  cidr_block           = "10.0.0.0/16"
+  enable_dns_support   = true
+  enable_dns_hostnames = true
+}
+
+resource "aws_subnet" "public_subnet_a" {
+  vpc_id            = aws_vpc.minha_vpc.id
+  cidr_block        = "10.0.1.0/24"
+  availability_zone = "eu-west-1a" # Altere para a sua região e AZ
+  map_public_ip_on_launch = true  # Permite que as instâncias recebam IPs públicos
+}
+
+resource "aws_subnet" "public_subnet_b" {
+  vpc_id            = aws_vpc.minha_vpc.id
+  cidr_block        = "10.0.2.0/24"
+  availability_zone = "eu-west-1b" # Altere para a sua região e AZ
+  map_public_ip_on_launch = true
+}
+
+
 resource "aws_elastic_beanstalk_environment" "beanstalkappenv" {
   name                ="${var.app_tags}-Api"
   application         = aws_elastic_beanstalk_application.example.name
