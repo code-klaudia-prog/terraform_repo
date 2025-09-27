@@ -1,19 +1,16 @@
-terraform {
-  required_version = ">= 1.1.9"
-  required_providers {
-    aws = {
-      source  = "hashicorp/aws"
-      version = "~> 5.52.0"
-    }
-  }
+
+# 1. Configuração do Provedor AWS (Onde os seus recursos de nuvem serão criados)
+provider "aws" {
+  region = "us-east-1" 
 }
 
-# Documentation: https://www.terraform.io/docs/language/providers/requirements.html
-provider "aws" {
-  region = "us-east-1"
-  default_tags {
-    tags = {
-      cs_terraform_examples = "aws_db_instance/simple"
+# 2. Configuração do Provedor TFE (Para interagir com o Terraform Cloud API)
+terraform {
+  required_providers {
+    # Define a fonte e a versão do provedor TFE
+    tfe = {
+      source  = "hashicorp/tfe"
+      version = "~> 0.70.0"
     }
   }
 }
