@@ -18,8 +18,8 @@ terraform {
 data "aws_elastic_beanstalk_hosted_zone" "current" {}
 
 resource "aws_elastic_beanstalk_application" "example" {
-  name = "App1"
-  description      = "App1"
+  name = "App2"
+  description      = "App2"
 }
 
 
