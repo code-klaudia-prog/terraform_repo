@@ -33,6 +33,16 @@ resource "aws_elastic_beanstalk_environment" "beanstalkappenv" {
     value     =  "aws-elasticbeanstalk-ec2-role"
   }
   setting {
+    namespace = "aws:ec2:vpc"
+    name      = "VPCId"
+    value     = var.vpc_id
+  }
+  setting {
+    namespace = "aws:autoscaling:launchconfiguration"
+    name      = "IamInstanceProfile"
+    value     =  "aws-elasticbeanstalk-ec2-role"
+  }
+  setting {
     namespace = "aws:elasticbeanstalk:environment"
     name      = "ServiceRole"
     value     = "aws-elasticbeanstalk-service-role"
@@ -42,10 +52,4 @@ resource "aws_elastic_beanstalk_environment" "beanstalkappenv" {
     name      = "AssociatePublicIpAddress"
     value     =  "True"
   }
-
-  setting {
-    namespace = "aws:autoscaling:launchconfiguration"
-    name      = "DisableIMDSv1"
-    value     = "true"
-  }  
- }
+}
