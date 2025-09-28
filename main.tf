@@ -31,7 +31,7 @@ resource "aws_vpc" "minha_vpc" {
 resource "aws_subnet" "public_subnet_a" {
   vpc_id            = aws_vpc.minha_vpc.id
   cidr_block        = "10.0.1.0/24"
-  availability_zone = "us-east-1a" # Altere para a sua região e AZ
+  availability_zone = "us-east-1a"
   map_public_ip_on_launch = true  # Permite que as instâncias recebam IPs públicos
 }
 
@@ -41,7 +41,6 @@ resource "aws_subnet" "public_subnet_b" {
   availability_zone = "us-east-1b" # Altere para a sua região e AZ
   map_public_ip_on_launch = true
 }
-
 
 resource "aws_elastic_beanstalk_environment" "beanstalkappenv" {
   name                ="${var.app_tags}-Api"
@@ -59,6 +58,14 @@ resource "aws_elastic_beanstalk_environment" "beanstalkappenv" {
     value     = var.vpc_id
   }
   setting {
+    namespace = "aws:ec2:vpc"
+    name      = "Subnets"
+    value     = join(",", [
+      aws_subnet.public_a.id,
+      aws_subnet.public_b.id
+    ])
+  }
+  setting {
     namespace = "aws:autoscaling:launchconfiguration"
     name      = "IamInstanceProfile"
     value     =  "aws-elasticbeanstalk-ec2-role"
@@ -66,7 +73,7 @@ resource "aws_elastic_beanstalk_environment" "beanstalkappenv" {
   setting {
     namespace = "aws:elasticbeanstalk:environment"
     name      = "ServiceRole"
-    value     = "aws-elasticbeanstalk-service-role"
+    value     = "a..ws-elasticbeanstalk-service-role"
   }
   setting {
     namespace = "aws:ec2:vpc"
