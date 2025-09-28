@@ -61,8 +61,8 @@ resource "aws_elastic_beanstalk_environment" "beanstalkappenv" {
     namespace = "aws:ec2:vpc"
     name      = "Subnets"
     value     = join(",", [
-      aws_subnet.public_a.id,
-      aws_subnet.public_b.id
+      aws_subnet.public_subnet_a.id,
+      aws_subnet.public_subnet_a.id
     ])
   }
   setting {
