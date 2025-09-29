@@ -211,14 +211,6 @@ resource "aws_elastic_beanstalk_environment" "beanstalkappenv" {
     name      = "AssociatePublicIpAddress"
     value     = "True"
   }
-  
-  # Adiciona o Security Group que criamos
-  setting {
-    namespace = "aws:ec2:vpc"
-    name      = "ELBSecurityGroups" # Para o Load Balancer, se houver
-    value     = aws_security_group.ec2_instance_security_group.id
-  }
-  
   setting {
     namespace = "aws:autoscaling:launchconfiguration"
     name      = "SecurityGroups" # Para as instâncias EC2
