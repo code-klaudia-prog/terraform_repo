@@ -222,7 +222,7 @@ resource "aws_elastic_beanstalk_environment" "beanstalkappenv" {
   setting {
     namespace = "aws:autoscaling:launchconfiguration"
     name      = "SecurityGroups" # Para as instâncias EC2
-    value     = aws_security_group.eb_instance_sg.id
+    value     = aws_security_group.ec2_instance_security_group.id
   }
   setting {
     namespace = "aws:elasticbeanstalk:environment"
