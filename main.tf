@@ -75,7 +75,7 @@ resource "aws_iam_role_policy_attachment" "eb_ec2_policy_attach_worker" {
 
 # Criação do IAM Instance Profile que as instâncias EC2 irão usar
 resource "aws_iam_instance_profile" "eb_instance_profile" {
-  name = "aws-elasticbeanstalk-ec2-role"
+  name = "aws-elasticbeanstalk-ec2-role-test"
   role = aws_iam_role.eb_ec2_role.name
 }
 
