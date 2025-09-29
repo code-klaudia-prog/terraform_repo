@@ -84,12 +84,38 @@ resource "aws_iam_instance_profile" "eb_instance_profile" {
 resource "aws_internet_gateway" "main_igw" {
   # 'var.vpc_id' deve ser a variável ou referência à sua VPC existente.
   # Se criou a VPC no Terraform, use a referência, ex: aws_vpc.minha_vpc.id
-  vpc_id = var.vpc_id # Altere para a sua referência de VPC
+  vpc_id = aws_vpc.minha_vpc.id
 
   tags = {
     Name = "igw-para-elasticbeanstalk"
   }
 }
+
+# Criação da Route Table
+resource "aws_route_table" "public" {
+  # O VPC ID é a referência obrigatória à sua Virtual Private Cloud
+  # Substitua 'aws_vpc.main.id' pela referência ao seu recurso VPC
+  vpc_id = aws_vpc.minha_vpc.id
+
+  tags = {
+    Name = "public-route-table"
+  }
+}
+
+# -------------------------------------------------------------
+# Exemplo de Associação da Route Table a uma Sub-rede (Opcional)
+# Se quiser que a Route Table criada seja utilizada por uma Sub-rede
+# -------------------------------------------------------------
+
+/*
+resource "aws_route_table_association" "public_subnet_association" {
+  # Substitua 'aws_subnet.public_a.id' pela referência à sua sub-rede
+  subnet_id      = aws_subnet.public_a.id
+  # Referência à Route Table criada acima
+  route_table_id = aws_route_table.public.id
+}
+*/
+
 
 # 2. Atualização da Tabela de Rotas Pública
 # Adiciona uma rota 0.0.0.0/0 (todo o tráfego) para o Internet Gateway na Tabela de Rotas pública
