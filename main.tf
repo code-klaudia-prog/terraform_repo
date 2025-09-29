@@ -123,8 +123,7 @@ resource "aws_route_table_association" "public_subnet_association" {
 resource "aws_route" "default_internet_route" {
   # 'var.public_route_table_id' deve ser a referência à sua Tabela de Rotas pública.
   # Se criou a Tabela de Rotas no Terraform, use a referência, ex: aws_route_table.public.id
-  route_table_id         = var.public_route_table_id # Altere para a sua referência de Tabela de Rotas
-  
+  route_table_id         = aws_route_table.public.id
   destination_cidr_block = "0.0.0.0/0"
   gateway_id             = aws_internet_gateway.main_igw.id
   
@@ -141,7 +140,7 @@ resource "aws_route" "default_internet_route" {
 resource "aws_route_table_association" "public_subnet_association" {
   # 'var.public_subnet_id' deve ser a ID da sua sub-rede pública.
   subnet_id      = aws_subnet.public_subnet_b.id
-  route_table_id = var.public_route_table_id
+  route_table_id = aws_route_table.public.id
 }
 
 
