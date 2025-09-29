@@ -133,14 +133,47 @@ resource "aws_route" "default_internet_route" {
   ]
 }
 
-# 3. (OPCIONAL) Se as suas sub-redes públicas ainda não estiverem associadas, 
-# utilize este bloco para as associar à Tabela de Rotas pública.
-# Este passo é crucial para garantir que as sub-redes onde o Load Balancer vive são 'públicas'.
+#  Associar as 2 subnets públicas à Tabela de Rotas pública.
+# Isto garante que as subnets onde o Load Balancer vive são 'públicas'
 
-resource "aws_route_table_association" "public_subnet_association" {
-  # 'var.public_subnet_id' deve ser a ID da sua sub-rede pública.
+# Associa a Sub-rede A à Tabela de Rotas pública (que tem rota para o IGW)
+resource "aws_route_table_association" "public_subnet_a_association" {
+  subnet_id      = aws_subnet.public_subnet_a.id
+  route_table_id = aws_route_table.public.id
+}
+
+# Associa a Sub-rede B à Tabela de Rotas pública
+resource "aws_route_table_association" "public_subnet_b_association" {
   subnet_id      = aws_subnet.public_subnet_b.id
   route_table_id = aws_route_table.public.id
+}
+
+# Security Group
+resource "aws_security_group" "ec2_instance_security_group" {
+  name        = "${var.application_name}-sg"
+  description = "Security group for Elastic Beanstalk instances"
+  vpc_id      = aws_vpc.minha_vpc.id
+
+  # Regra de Entrada (Ingress) - Tráfego HTTP (porta 80) de qualquer lugar
+  ingress {
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  # Regra de Saída (Egress) - Permite todo o tráfego de saída
+  # NECESSÁRIO para a comunicação das instâncias com a API da AWS (Elastic Beanstalk)
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1" # -1 significa todos os protocolos
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name = "${var.application_name}-Instance-SG"
+  }
 }
 
 
@@ -171,6 +204,25 @@ resource "aws_elastic_beanstalk_environment" "beanstalkappenv" {
     namespace = "aws:autoscaling:launchconfiguration"
     name      = "IamInstanceProfile"
     value     =  "aws-elasticbeanstalk-ec2-role"
+  }
+  # Atribui o Security Group às instâncias EC2
+  setting {
+    namespace = "aws:ec2:vpc"
+    name      = "AssociatePublicIpAddress"
+    value     = "True"
+  }
+  
+  # Adiciona o Security Group que criamos
+  setting {
+    namespace = "aws:ec2:vpc"
+    name      = "ELBSecurityGroups" # Para o Load Balancer, se houver
+    value     = aws_security_group.ec2_instance_security_group.id
+  }
+  
+  setting {
+    namespace = "aws:autoscaling:launchconfiguration"
+    name      = "SecurityGroups" # Para as instâncias EC2
+    value     = aws_security_group.eb_instance_sg.id
   }
   setting {
     namespace = "aws:elasticbeanstalk:environment"
