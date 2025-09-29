@@ -57,7 +57,7 @@ data "aws_iam_policy_document" "eb_ec2_assume_role" {
 
 # Criação do EC2 Role
 resource "aws_iam_role" "eb_ec2_role" {
-  name               = "aws-elasticbeanstalk-ec2-role"
+  name               = "aws-elasticbeanstalk-ec2-role-claudia"
   assume_role_policy = data.aws_iam_policy_document.eb_ec2_assume_role.json
 }
 
