@@ -79,6 +79,46 @@ resource "aws_iam_instance_profile" "eb_instance_profile" {
   role = aws_iam_role.eb_ec2_role.name
 }
 
+# 1. Criação do Internet Gateway (IGW)
+# O IGW permite a comunicação entre a VPC e a Internet.
+resource "aws_internet_gateway" "main_igw" {
+  # 'var.vpc_id' deve ser a variável ou referência à sua VPC existente.
+  # Se criou a VPC no Terraform, use a referência, ex: aws_vpc.minha_vpc.id
+  vpc_id = var.vpc_id # Altere para a sua referência de VPC
+
+  tags = {
+    Name = "igw-para-elasticbeanstalk"
+  }
+}
+
+# 2. Atualização da Tabela de Rotas Pública
+# Adiciona uma rota 0.0.0.0/0 (todo o tráfego) para o Internet Gateway na Tabela de Rotas pública
+
+resource "aws_route" "default_internet_route" {
+  # 'var.public_route_table_id' deve ser a referência à sua Tabela de Rotas pública.
+  # Se criou a Tabela de Rotas no Terraform, use a referência, ex: aws_route_table.public.id
+  route_table_id         = var.public_route_table_id # Altere para a sua referência de Tabela de Rotas
+  
+  destination_cidr_block = "0.0.0.0/0"
+  gateway_id             = aws_internet_gateway.main_igw.id
+  
+  # Adicionar depends_on para garantir que o IGW é criado antes da rota
+  depends_on = [
+    aws_internet_gateway.main_igw
+  ]
+}
+
+# 3. (OPCIONAL) Se as suas sub-redes públicas ainda não estiverem associadas, 
+# utilize este bloco para as associar à Tabela de Rotas pública.
+# Este passo é crucial para garantir que as sub-redes onde o Load Balancer vive são 'públicas'.
+
+resource "aws_route_table_association" "public_subnet_association" {
+  # 'var.public_subnet_id' deve ser a ID da sua sub-rede pública.
+  subnet_id      = aws_subnet.public_subnet_b.id
+  route_table_id = var.public_route_table_id
+}
+
+
 resource "aws_elastic_beanstalk_environment" "beanstalkappenv" {
   name                ="${var.app_tags}-Api"
   application         = aws_elastic_beanstalk_application.example.name
