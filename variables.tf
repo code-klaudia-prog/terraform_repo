@@ -11,12 +11,6 @@ variable "private_subnet"{
   default     = false
 }
 
-variable "subnet_id" {
-  type        = string
-  description = "ID of subnet to deploy the instance in."
-  default     = ""
-}
-
 # variable "tags" {    
 #   description = "Common tags that should be used on specific resources"
 #   type        = map(string)
@@ -82,6 +76,7 @@ variable "s3_log_bucket_id" {
   description = "Name of the S3 logging bucket to deliver S3 server logs to. BUCKET MUST BE EXISTING!"
   default     = ""
 }
+
 
 
 
