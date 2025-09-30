@@ -39,6 +39,29 @@ resource "aws_iam_role" "ssm_role" {
   }
 }
 
+#### Create Policy to allow instance profile to put objects in the S3 bucket ####
+
+resource "aws_iam_policy" "ec2_policy" {
+  name        = "ssm_logs_policy_${data.aws_region.current.name}_${data.aws_caller_identity.current.account_id}"
+  description = "Policy allowing put and get operations for ec2 to place session logs in specified bucket"
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = [
+          "s3:GetObject",
+          "s3:PutObject",
+          "s3:PutObjectAcl"
+
+        ]
+        Effect   = "Allow"
+        Resource = "${aws_s3_bucket.ssm_s3_bucket.arn}/*"
+      },
+    ]
+  })
+}
+
 #### Create the S3 bucket ####
 
 resource "aws_s3_bucket" "ssm_s3_bucket" {
