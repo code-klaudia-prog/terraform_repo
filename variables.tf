@@ -12,20 +12,14 @@ variable "private_subnet"{
 }
 
 
-variable "tags" {    
-  description = "Common tags that should be used on specific resources"
-  type        = map(string)
-}
+# variable "tags" {    
+#   description = "Common tags that should be used on specific resources"
+#   type        = map(string)
+# }
 
 variable "ssm_policy_arn" {
   type    = string
   default = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
-}
-
-variable "cloudwatch_policy_arn" {
-  type    = string
-  default = "arn:aws:iam::aws:policy/CloudWatchLogsFullAccess"
-
 }
 
 variable "vpc_id" {
@@ -82,3 +76,4 @@ variable "s3_log_bucket_id" {
   description = "Name of the S3 logging bucket to deliver S3 server logs to. BUCKET MUST BE EXISTING!"
   default     = ""
 }
+
