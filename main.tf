@@ -35,6 +35,17 @@ resource "aws_s3_bucket_versioning" "versioning_s3" {
   }
 }
 
+#### Configure block public access policies on the bucket ####
+
+resource "aws_s3_bucket_public_access_block" "block_public_s3" {
+  bucket = aws_s3_bucket.ssm_s3_bucket.id
+
+  block_public_acls       = true
+  block_public_policy     = true
+  ignore_public_acls      = true
+  restrict_public_buckets = true
+}
+
 #### Create the EC2 instance with AWS managed KMS key for EBS volume encryption ####
 #### Must have associate_public_ip_address set to true unless assignment is handled within the subnet ####
 
