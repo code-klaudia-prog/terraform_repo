@@ -26,6 +26,15 @@ resource "aws_s3_bucket" "ssm_s3_bucket" {
   }
 }
 
+#### Enable versioning on the bucket ####
+
+resource "aws_s3_bucket_versioning" "versioning_s3" {
+  bucket = aws_s3_bucket.ssm_s3_bucket.id
+  versioning_configuration {
+    status = "Enabled"
+  }
+}
+
 #### Create the EC2 instance with AWS managed KMS key for EBS volume encryption ####
 #### Must have associate_public_ip_address set to true unless assignment is handled within the subnet ####
 
