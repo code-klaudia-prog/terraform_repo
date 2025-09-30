@@ -1,84 +1,84 @@
-variable "region" {}
-
-variable "domain_name" {} 
-
-variable "alarm_sns_topic" {}
-
-
-variable "creator" {
-    description = "Name of creator"
-    type = string
-    default = "claudia"
+data "aws_caller_identity" "current" {}
+data "aws_region" "current" {}
+data "aws_vpc" "desired_vpc" {
+  id = var.vpc_id
 }
 
-variable "techstack" {
-    description = "Choose your tech stack - php80, php74, java11, java8, tomcat85j11, tomcat85j8, go344, docker"
-    type = string
-    default = "php80"
+# NOTES: Must configure preferences in Systems manager Console after deploying- use the resources created to fill in KMS ID and CloudWatch Logs Group
+variable "private_subnet"{
+  type        = bool
+  description = "Conditional variable to determine if the EC2 instance is deployed in a private subnet. Set to TRUE if it is."
+  default     = false
 }
 
-variable "eb_env_name" {
-    description = "Elastic beanstalk environment name"
-    type = string
-    default = "abk-tf-app-env"
+
+variable "tags" {    
+  description = "Common tags that should be used on specific resources"
+  type        = map(string)
 }
 
-variable "app_version" {
-    description = "Application version"
-    type = string
-    default = "my-default-version"
+variable "ssm_policy_arn" {
+  type    = string
+  default = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
 }
 
-variable "eb_stack" {
-    description = "Platform for Elastic beanstalk environment" 
-    type = map(string)
-    default = {
-        php80 = "64bit Amazon Linux 2 v3.3.9 running PHP 8.0"
-        php74 = "64bit Amazon Linux 2 v3.3.9 running PHP 7.4"
-        java11 = "64bit Amazon Linux 2 v3.2.10 running Corretto 11"
-        java8 = "64bit Amazon Linux 2 v3.2.10 running Corretto 8"
-        tomcat85j11 = "64bit Amazon Linux 2 v4.2.10 running Tomcat 8.5 Corretto 11"
-        tomcat85j8 = "64bit Amazon Linux 2 v4.2.10 running Tomcat 8.5 Corretto 8"
-        go1 = "64bit Amazon Linux 2 v3.4.4 running Go 1"
-        docker = "64bit Amazon Linux 2 v3.4.10 running Docker"
-    }
-}
+variable "cloudwatch_policy_arn" {
+  type    = string
+  default = "arn:aws:iam::aws:policy/CloudWatchLogsFullAccess"
 
-variable "app_tags" {
-  type = string
-}
-
-variable "application_name" {
-  type = string
 }
 
 variable "vpc_id" {
-  type = string
+  type        = string
+  description = "The ID of the VPC to deploy the infrastructure."
+  default     = ""
 }
 
-variable "ec2_subnets" {
-  type = string
+variable "subnet_id" {
+  type        = string
+  description = "ID of subnet to deploy the instance in."
+  default     = ""
 }
 
-variable "elb_subnets" {
-  type = list(string)
+
+variable "ami" {
+  type        = string
+  description = "AMI for the EC2:"
+  default     = ""
 }
 
 variable "instance_type" {
-  type = string
+  type        = string
+  description = "Type of instance to be created:"
+  default     = ""
 }
 
-variable "disk_size" {
-  type = string
+variable "ssm_role" {
+  type        = string
+  description = "The name of the role to be assigned to the instance profile:"
+  default     = ""
 }
 
-variable "keypair" {
-  type = string
+variable "team" {
+  type        = string
+  description = "Name of your team to be appended to the SSM Instance Profile:"
+  default     = ""
 }
 
-variable "sshrestrict" {
-  type = string
+variable "security_group" {
+  description = "Name of the security group to attach to the instance"
+  type        = string
+  default     = ""
 }
 
+variable "s3_bucket" {
+  type        = string
+  description = "Name of the S3 bucket for S3 server side logging of session manager sessions"
+  default     = ""
+}
 
-
+variable "s3_log_bucket_id" {
+  type        = string
+  description = "Name of the S3 logging bucket to deliver S3 server logs to. BUCKET MUST BE EXISTING!"
+  default     = ""
+}
