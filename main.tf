@@ -15,6 +15,30 @@ terraform {
   }
 }
 
+#### Create the IAM role for the instance profile ####
+
+resource "aws_iam_role" "ssm_role" {
+  name = "${var.ssm_role}-${var.team}"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Sid    = "EC2AssumeRole"
+        Action = "sts:AssumeRole"
+        Effect = "Allow"
+        Principal = {
+          Service = "ec2.amazonaws.com"
+        }
+      },
+    ]
+  })
+
+  tags = {
+    ssmdemo = "true"
+  }
+}
+
 #### Create the S3 bucket ####
 
 resource "aws_s3_bucket" "ssm_s3_bucket" {
