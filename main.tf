@@ -69,6 +69,12 @@ resource "aws_iam_policy_attachment" "s3_attach" {
 
 }
 
+resource "aws_iam_policy_attachment" "ssm-attach" {
+  name       = "managed-ssm-policy-attach"
+  roles      = [aws_iam_role.ssm_role.name]
+  policy_arn = var.ssm_policy_arn
+}
+
 #### Create the S3 bucket ####
 
 resource "aws_s3_bucket" "ssm_s3_bucket" {
