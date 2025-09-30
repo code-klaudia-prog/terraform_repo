@@ -15,6 +15,17 @@ terraform {
   }
 }
 
+#### Create the S3 bucket ####
+
+resource "aws_s3_bucket" "ssm_s3_bucket" {
+  bucket              = "${var.s3_bucket}-${data.aws_caller_identity.current.id}-${data.aws_region.current.name}"
+  object_lock_enabled = true
+  tags = {
+    name     = "ssm-logs"
+    DataType = "SENSITIVE"
+  }
+}
+
 #### Create the EC2 instance with AWS managed KMS key for EBS volume encryption ####
 #### Must have associate_public_ip_address set to true unless assignment is handled within the subnet ####
 
