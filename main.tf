@@ -208,7 +208,7 @@ resource "aws_vpc_endpoint" "ssm-endpt" {
   security_group_ids = [
     aws_security_group.http_allow.id
   ]
-  subnet_ids        = [var.subnet_id]
+  subnet_ids        = [aws_subnet.public_subnet_1.id]
   private_dns_enabled = true
   service_name = "com.amazonaws.${data.aws_region.current.name}.ssm"
 }
