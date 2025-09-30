@@ -62,6 +62,13 @@ resource "aws_iam_policy" "ec2_policy" {
   })
 }
 
+resource "aws_iam_policy_attachment" "s3_attach" {
+  name       = "ssm-s3-put"
+  roles      = [aws_iam_role.ssm_role.name]
+  policy_arn = aws_iam_policy.ec2_policy.arn
+
+}
+
 #### Create the S3 bucket ####
 
 resource "aws_s3_bucket" "ssm_s3_bucket" {
