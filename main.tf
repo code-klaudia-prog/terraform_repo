@@ -126,12 +126,6 @@ resource "aws_instance" "ssm_instance" {
   monitoring             = true
   subnet_id              = var.subnet_id
   associate_public_ip_address = var.private_subnet ? false : true
-  tags = merge(
-    var.tags,
-    {
-      Name = "cloud-security-ec2"
-    }
-  )
 
   root_block_device {
     encrypted  = true
