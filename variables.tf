@@ -28,13 +28,6 @@ variable "vpc_id" {
   default     = ""
 }
 
-variable "subnet_id" {
-  type        = string
-  description = "ID of subnet to deploy the instance in."
-  default     = ""
-}
-
-
 variable "ami" {
   type        = string
   description = "AMI for the EC2:"
@@ -76,6 +69,7 @@ variable "s3_log_bucket_id" {
   description = "Name of the S3 logging bucket to deliver S3 server logs to. BUCKET MUST BE EXISTING!"
   default     = ""
 }
+
 
 
 
