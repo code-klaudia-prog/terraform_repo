@@ -1,8 +1,6 @@
 data "aws_caller_identity" "current" {}
 data "aws_region" "current" {}
-data "aws_vpc" "desired_vpc" {
-  id = var.vpc_id
-}
+
 
 # NOTES: Must configure preferences in Systems manager Console after deploying- use the resources created to fill in KMS ID and CloudWatch Logs Group
 variable "private_subnet"{
@@ -69,6 +67,7 @@ variable "s3_log_bucket_id" {
   description = "Name of the S3 logging bucket to deliver S3 server logs to. BUCKET MUST BE EXISTING!"
   default     = ""
 }
+
 
 
 
