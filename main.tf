@@ -148,7 +148,7 @@ resource "aws_instance" "ssm_instance" {
   vpc_security_group_ids = [aws_security_group.http_allow.id]
   iam_instance_profile   = aws_iam_instance_profile.ssm_profile.name
   monitoring             = true
-  subnet_id              = var.subnet_id
+  subnet_id              = aws_subnet.public_subnet_1.id
   associate_public_ip_address = var.private_subnet ? false : true
 
   root_block_device {
@@ -220,7 +220,7 @@ resource "aws_vpc_endpoint" "ssmmsgs-endpt" {
   security_group_ids = [
     aws_security_group.http_allow.id
   ]
-  subnet_ids        = [var.subnet_id]
+  subnet_ids        = [aws_subnet.public_subnet_1.id]
   private_dns_enabled = true
   service_name = "com.amazonaws.${data.aws_region.current.name}.ssmmessages"
 }
