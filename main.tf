@@ -130,12 +130,16 @@ resource "aws_s3_bucket_public_access_block" "block_public_s3" {
 #### Create the EC2 instance with AWS managed KMS key for EBS volume encryption ####
 #### Must have associate_public_ip_address set to true unless assignment is handled within the subnet ####
 
+data "aws_vpc" "desired_vpc" {
+  id = aws_vpc.minha_vpc.id
+}
+
 data "aws_subnet" "ec2_subnet" {
-  id = var.subnet_id
+  id = aws_subnet.public_subnet_1.id
 }
 
 data "aws_route_table" "subnet_rt" {
-  subnet_id = var.subnet_id
+  subnet_id = aws_subnet.public_subnet_1.id
 }
 
 resource "aws_instance" "ssm_instance" {
