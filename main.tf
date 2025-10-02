@@ -139,7 +139,11 @@ data "aws_subnet" "ec2_subnet" {
 }
 
 data "aws_route_table" "subnet_rt" {
-  subnet_id = aws_subnet.public_subnet_1.id
+  vpc_id = aws_vpc.minha_vpc.id
+  filter {
+    name   = "association.main"
+    values = ["true"]
+  }
 }
 
 resource "aws_instance" "ssm_instance" {
