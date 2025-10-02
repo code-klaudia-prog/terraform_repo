@@ -77,7 +77,7 @@ resource "aws_iam_policy" "ec2_policy" {
 
         ]
         Effect   = "Allow"
-        Resource = "${aws_s3_bucket.ssm_s3_bucket.arn}/*"
+        Resource = "${aws_s3_bucket.bucklau.arn}/*"
       },
     ]
   })
@@ -110,7 +110,7 @@ resource "aws_s3_bucket" "bucklau" {
 #### Enable versioning on the bucket ####
 
 resource "aws_s3_bucket_versioning" "versioning_s3" {
-  bucket = aws_s3_bucket.ssm_s3_bucket.id
+  bucket = aws_s3_bucket.bucklau.id
   versioning_configuration {
     status = "Enabled"
   }
@@ -119,7 +119,7 @@ resource "aws_s3_bucket_versioning" "versioning_s3" {
 #### Configure block public access policies on the bucket ####
 
 resource "aws_s3_bucket_public_access_block" "block_public_s3" {
-  bucket = aws_s3_bucket.ssm_s3_bucket.id
+  bucket = aws_s3_bucket.bucklau.id
 
   block_public_acls       = true
   block_public_policy     = true
