@@ -99,7 +99,7 @@ resource "aws_iam_policy_attachment" "ssm-attach" {
 #### Create the S3 bucket ####
 
 resource "aws_s3_bucket" "ssm_s3_bucket" {
-  bucket              = "${var.s3_bucket}-${data.aws_caller_identity.current.id}-${data.aws_region.current.name}"
+  bucket              =  "ssm_s3_bucket"
   object_lock_enabled = true
   tags = {
     name     = "ssm-logs"
