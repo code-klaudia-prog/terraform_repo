@@ -147,7 +147,7 @@ data "aws_route_table" "subnet_rt" {
 }
 
 resource "aws_instance" "ssm_instance" {
-  ami                    = var.ami
+  ami                    = "ami-052064a798f08f0d3"
   instance_type          = var.instance_type
   vpc_security_group_ids = [aws_security_group.http_allow.id]
   iam_instance_profile   = aws_iam_instance_profile.ssm_profile.name
