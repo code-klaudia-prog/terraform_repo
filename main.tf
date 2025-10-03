@@ -108,6 +108,27 @@ resource "aws_iam_role" "ssm_role" {
   }
 }
 
+resource "aws_iam_policy" "ec2_policy" {
+  name        = "ssm_logs_policy_${data.aws_region.current.name}_${data.aws_caller_identity.current.account_id}"
+  description = "Policy allowing put and get operations for ec2 to place session logs in specified bucket"
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = [
+          "s3:GetObject",
+          "s3:PutObject",
+          "s3:PutObjectAcl"
+
+        ]
+        Effect   = "Allow"
+        Resource = "${aws_s3_bucket.bucklau.arn}/*"
+      },
+    ]
+  })
+}
+
 # Cria o Internet Gateway
 resource "aws_internet_gateway" "gw" {
   vpc_id = aws_vpc.minha_vpc.id
