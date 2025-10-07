@@ -41,27 +41,14 @@ resource "aws_instance" "example" {
   }
 }
 
-resource "aws_ssm_document" "foo" {
-  name          = "test_document"
-  document_type = "Command"
-
-  content = <<DOC
-  {
-    "schemaVersion": "1.2",
-    "description": "Check ip configuration of a Linux instance.",
-    "parameters": {
-
-    },
-    "runtimeConfig": {
-      "aws:runShellScript": {
-        "properties": [
-          {
-            "id": "0.aws:runShellScript",
-            "runCommand": ["ifconfig"]
-          }
-        ]
-      }
-    }
-  }
-DOC
+module "ssm_runcommand_linux_example_1" {
+  source = "../../../ssm_runcommand_module"
+  # The following parameters are required:
+  instance_id = aws_instance.amazon_linux_instance.id
+  target_os   = "unix"
+  command     = "whoami"
+  # The following parameters are optional:
+  show_command_output         = true
+  wait_for_command_completion = true
+  log_file                    = "${path.cwd}/ssm_runcommand_linux_example_1.log"
 }
