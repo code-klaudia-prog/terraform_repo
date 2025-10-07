@@ -40,3 +40,26 @@ resource "aws_instance" "example" {
     Name = "HelloWorld"
   }
 }
+
+resource "ssm_command" "greeting" {
+  document_name = "AWS-RunShellScript"
+  parameters {
+    name   = "commands"
+    values = ["echo 'Hello World!'"]
+  }
+  destroy_document_name = "AWS-RunShellScript"
+  destroy_parameters {
+    name   = "commands"
+    values = ["echo 'Goodbye World.'"]
+  }
+  targets {
+    key    = "InstanceIds"
+    values = [aws_instance.example.id]
+  }
+  comment           = "Greetings from SSM!"
+  execution_timeout = 600
+  output_location {
+    s3_bucket_name = aws_s3_bucket.output.bucket
+    s3_key_prefix  = "greetings"
+  }
+}
