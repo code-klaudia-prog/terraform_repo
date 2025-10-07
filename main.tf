@@ -21,10 +21,20 @@ resource "aws_instance" "example" {
   instance_type = "t3.micro"
 }
 
+resource "time_sleep" "wait_60_seconds" {
+  depends_on = [aws_instance.example]
+  create_duration = "60s"
+}
+
 module "ssm_runcommand_unix" {
   source                      = "github.com/paololazzari/terraform-ssm-runcommand"
   instance_id                 = aws_instance.example.id
   target_os                   = "unix"
   command                     = "ps -ax | grep 'amazon*'"
   wait_for_command_completion = true
+}
+
+resource "time_sleep" "wait_90_seconds" {
+  depends_on = [ssm_runcommand_unix]
+  create_duration = "90s"
 }
