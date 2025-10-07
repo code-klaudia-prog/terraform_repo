@@ -26,15 +26,16 @@ resource "time_sleep" "wait_60_seconds" {
   create_duration = "60s"
 }
 
-module "ssm_runcommand_unix" {
-  source                      = "github.com/paololazzari/terraform-ssm-runcommand"
-  instance_id                 = aws_instance.example.id
-  target_os                   = "unix"
-  command                     = "ps -ax | grep 'amazon*'"
-  wait_for_command_completion = true
-}
-
-resource "time_sleep" "wait_90_seconds" {
-  depends_on = [ssm_runcommand_unix]
-  create_duration = "90s"
+resource "ssm_command" "greeting" {
+  document_name = "AWS-RunShellScript"
+  parameters {
+    name   = "commands"
+    values = ["echo 'Hello World!'"]
+  }
+  targets {
+    key    = "aws_instance.example.id"
+    values = [aws_instance.example.id]
+  }
+  comment           = "Greetings from SSM!"
+  execution_timeout = 600
 }
