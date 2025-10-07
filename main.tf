@@ -24,16 +24,9 @@ resource "aws_vpc" "vpc_minha" {
 
 resource "aws_subnet" "public_subnet_1" {
   vpc_id            = aws_vpc.vpc_minha.id
-  cidr_block        = "10.0.0.7/24"
+  cidr_block        = "10.0.0.0/24"
   availability_zone = "us-east-1a"
   map_public_ip_on_launch = true  # Permite que as instâncias recebam IPs públicos
-}
- 
-resource "aws_subnet" "public_subnet_2" {
-  vpc_id            = aws_vpc.vpc_minha.id
-  cidr_block        = "10.0.0.8/24"
-  availability_zone = "us-east-1b" # Altere para a sua região e AZ
-  map_public_ip_on_launch = true
 }
 
 resource "aws_security_group" "http_allow" {
@@ -90,7 +83,7 @@ resource "aws_iam_role" "ssm_role" {
   name = "${var.ssm_role}-${var.team}"
 
   assume_role_policy = jsonencode({
-    Version = "2012-10-17"
+    Version = "2025-10-07"
     Statement = [
       {
         Sid    = "EC2AssumeRole"
