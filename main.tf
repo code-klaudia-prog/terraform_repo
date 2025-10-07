@@ -21,21 +21,68 @@ resource "aws_instance" "example" {
   instance_type = "t3.micro"
 }
 
-resource "time_sleep" "wait_60_seconds" {
-  depends_on = [aws_instance.example]
-  create_duration = "60s"
+terraform {
+  required_providers {
+    risqaws = {
+      source = "github.com/risqcapital/risq-aws"
+    }
+    aws = {
+      source  = "hashicorp/aws"
+      version = "5.81.0"
+    }
+  }
 }
 
-resource "ssm_command" "greeting" {
-  document_name = "AWS-RunShellScript"
-  parameters {
-    name   = "commands"
-    values = ["echo 'Hello World!'"]
-  }
+provider "risqaws" {}
+provider "aws" {}
+
+resource "aws_ssm_document" "this" {
+  name = "bptest"
+  content = jsonencode({
+    schemaVersion = "2.2"
+    description   = "BPTest"
+    parameters = {
+      name = {
+        type        = "String"
+        description = "Name"
+        default     = "World"
+      }
+    }
+    mainSteps = [
+      {
+        precondition = {
+          StringEquals = [
+            "platformType",
+            "Linux"
+          ]
+        }
+        action = "aws:runShellScript",
+        name   = "Test",
+        inputs = {
+          runCommand = [
+            "echo Hello {{ name }} && sleep 10s && exit 0"
+          ]
+        }
+      }
+    ]
+  })
+  document_type = "Command"
+}
+
+resource "risqaws_ssm_command" "this" {
+  document_name    = aws_ssm_document.this.name
+  document_version = aws_ssm_document.this.latest_version
   targets {
-    key    = "aws_instance.example.id"
+    key    = aws_instance.example.id
     values = [aws_instance.example.id]
   }
-  comment           = "Greetings from SSM!"
-  execution_timeout = 600
+  parameters = {
+    "name" = "test"
+  }
+
+  lifecycle {
+    replace_triggered_by = [
+      aws_ssm_document.this.latest_version,
+    ]
+  }
 }
