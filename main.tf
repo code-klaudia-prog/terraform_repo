@@ -47,7 +47,7 @@ resource "aws_security_group" "http_allow" {
     description = "allow outbound traffic over 443"
   }
 
-  vpc_id = aws_vpc.minha_vpc.id
+  vpc_id = aws_vpc.vpc_minha.id
 
 }
 
