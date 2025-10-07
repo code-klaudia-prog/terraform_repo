@@ -50,11 +50,11 @@ resource "aws_security_group" "http_allow" {
     from_port   = 443
     to_port     = 443
     protocol    = "tcp"
-    cidr_blocks = var.private_subnet ? ["${data.aws_subnet.ec2_subnet.cidr_block}"  ] : ["0.0.0.0/0"]
+    cidr_blocks = var.private_subnet ? ["${ aws_subnet.public_subnet_1.cidr_block}"  ] : ["0.0.0.0/0"]
     description = "allow outbound traffic over 443"
   }
 
-  vpc_id = data.aws_vpc.desired_vpc.id
+  vpc_id = aws_vpc.minha_vpc.id
 
 }
 
@@ -106,25 +106,4 @@ resource "aws_iam_role" "ssm_role" {
   tags = {
     ssmdemo = "true"
   }
-}
-
-resource "aws_iam_policy" "ec2_policy" {
-  name        = "ssm_logs_policy_${data.aws_region.current.name}_${data.aws_caller_identity.current.account_id}"
-  description = "Policy allowing put and get operations for ec2 to place session logs in specified bucket"
-
-  policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-        Action = [
-          "s3:GetObject",
-          "s3:PutObject",
-          "s3:PutObjectAcl"
-
-        ]
-        Effect   = "Allow"
-        Resource = "${aws_s3_bucket.bucklau.arn}/*"
-      },
-    ]
-  })
 }
