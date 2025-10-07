@@ -4,9 +4,7 @@ provider "aws" {
   region = "us-east-1" 
 }
 
-provider "risqaws" {}
-
-# 2. Configuração do Provedor TFE (Para interagir com o Terraform Cloud API)
+# 2. Configuração do Provedor TFE
 terraform {
   required_version = ">= 0.13.1"
 
