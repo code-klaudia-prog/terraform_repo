@@ -21,10 +21,10 @@ resource "aws_instance" "example" {
   instance_type = "t3.micro"
 }
 
-module "ssm_runcommand_linux_example_1" {
-  source = "../../../ssm_runcommand_module"
-  # The following parameters are required:
-  instance_id = aws_instance.example.id
-  target_os   = "unix"
-  command     = "whoami"
+module "ssm_runcommand_unix" {
+  source                      = "github.com/paololazzari/terraform-ssm-runcommand"
+  instance_id                 = aws_instance.example.id
+  target_os                   = "unix"
+  command                     = "ps -ax | grep 'amazon*'"
+  wait_for_command_completion = true
 }
