@@ -27,4 +27,8 @@ module "ssm_runcommand_unix" {
   target_os                   = "unix"
   command                     = "ps -ax | grep 'amazon*'"
   wait_for_command_completion = true
+  # --- Timeout Adicionado ---
+  timeouts {
+    create = "15m" # Espera até 15 minutos pela conclusão do comando
+  }
 }
