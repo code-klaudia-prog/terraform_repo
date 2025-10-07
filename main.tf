@@ -4,23 +4,6 @@ provider "aws" {
   region = "us-east-1" 
 }
 
-# 2. Configuração do Provedor TFE
-terraform {
-  required_version = ">= 0.13.1"
-
-  required_providers {
-    aws = {
-      source  = "hashicorp/aws"
-      version = ">= 3.0.0"
-    }
-  }
-}
-
-resource "aws_instance" "example" {
-  ami           = "ami-052064a798f08f0d3"
-  instance_type = "t3.micro"
-}
-
 terraform {
   required_providers {
     risqaws = {
@@ -31,6 +14,11 @@ terraform {
       version = "5.81.0"
     }
   }
+}
+
+resource "aws_instance" "example" {
+  ami           = "ami-052064a798f08f0d3"
+  instance_type = "t3.micro"
 }
 
 resource "aws_ssm_document" "this" {
