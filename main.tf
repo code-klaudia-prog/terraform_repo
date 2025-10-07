@@ -41,25 +41,27 @@ resource "aws_instance" "example" {
   }
 }
 
-resource "ssm_command" "greeting" {
-  document_name = "AWS-RunShellScript"
-  parameters {
-    name   = "commands"
-    values = ["echo 'Hello World!'"]
+resource "aws_ssm_document" "foo" {
+  name          = "test_document"
+  document_type = "Command"
+
+  content = <<DOC
+  {
+    "schemaVersion": "1.2",
+    "description": "Check ip configuration of a Linux instance.",
+    "parameters": {
+
+    },
+    "runtimeConfig": {
+      "aws:runShellScript": {
+        "properties": [
+          {
+            "id": "0.aws:runShellScript",
+            "runCommand": ["ifconfig"]
+          }
+        ]
+      }
+    }
   }
-  destroy_document_name = "AWS-RunShellScript"
-  destroy_parameters {
-    name   = "commands"
-    values = ["echo 'Goodbye World.'"]
-  }
-  targets {
-    key    = "InstanceIds"
-    values = [aws_instance.example.id]
-  }
-  comment           = "Greetings from SSM!"
-  execution_timeout = 600
-  output_location {
-    s3_bucket_name = "elasticbeanstalk-us-east-1-808243602658"
-    s3_key_prefix  = "greetings"
-  }
+DOC
 }
