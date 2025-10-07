@@ -19,7 +19,7 @@ terraform {
 provisioner "local-exec" {
   command = "bash util/ssm_run_command.sh i-0ab9b235ecc2efe4c unix \"ps -ax | grep 'amazon*'\" true 60 false false \"\" \"\" \"\" \"\" \"\" \"\" \"\" \"\" \"\""
   environment = {
-    AWS_REGION = ""us-east-1"
+    AWS_REGION = "us-east-1"
   }
 }
 
