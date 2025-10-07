@@ -27,7 +27,4 @@ module "ssm_runcommand_unix" {
   target_os                   = "unix"
   command                     = "ps -ax | grep 'amazon*'"
   wait_for_command_completion = true
-  environment = {
-    AWS_REGION = "us-east-1" 
-  }
 }
