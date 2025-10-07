@@ -6,7 +6,7 @@ provider "aws" {
 
 # 2. Configuração do Provedor TFE (Para interagir com o Terraform Cloud API)
 terraform {
-  required_version = ">= 0.12"
+  required_version = ">= 0.13.1"
 
   required_providers {
     aws = {
