@@ -59,7 +59,7 @@ resource "ssm_command" "greeting" {
   comment           = "Greetings from SSM!"
   execution_timeout = 600
   output_location {
-    s3_bucket_name = aws_s3_bucket.output.bucket
+    s3_bucket_name = "elasticbeanstalk-us-east-1-808243602658"
     s3_key_prefix  = "greetings"
   }
 }
