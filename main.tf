@@ -57,7 +57,7 @@ resource "aws_security_group_rule" "example" {
   protocol          = "tcp"
   cidr_blocks       = [aws_vpc.my_custom_vpc.cidr_block]
   ipv6_cidr_blocks  = [aws_vpc.my_custom_vpc.ipv6_cidr_block]
-  security_group_id = aws_security_group.ssh_access.
+  security_group_id = aws_security_group.ssh_access
 }
 
 resource "aws_instance" "example2" {
