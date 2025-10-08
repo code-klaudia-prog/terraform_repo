@@ -58,6 +58,11 @@ resource "aws_instance" "example2" {
   ]
 }
 
+resource "aws_vpc_security_group_vpc_association" "example2" {
+  security_group_id = aws_security_group.ssh_access.id
+  vpc_id            = aws_vpc.my_custom_vpc.id
+}
+
 resource "aws_ssm_document" "that" {
   name = "bptest"
   content = jsonencode({
