@@ -7,11 +7,8 @@ provider "aws" {
 terraform {
   required_providers {
     risqaws = {
-      source = "github.com/risqcapital/risq-aws"
-    }
-    aws = {
-      source  = "hashicorp/aws"
-      version = "5.81.0"
+      source = "risqcapital/risqaws"
+      version = "1.0.0"
     }
   }
 }
