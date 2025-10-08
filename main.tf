@@ -42,18 +42,22 @@ resource "aws_internet_gateway" "my_igw" {
   }
 }
 
-# No need to associate the internet gateway to the VPC
-# resource "aws_internet_gateway_attachment" "example" {
-#  internet_gateway_id = aws_internet_gateway.my_igw.id
-#  vpc_id              = aws_vpc.my_custom_vpc.id
-#}
-
 resource "aws_security_group" "ssh_access" {
   ingress {
     from_port = 22
     to_port = 22
     protocol = "tcp"
   }
+}
+
+resource "aws_security_group_rule" "example" {
+  type              = "ingress"
+  from_port         = 22
+  to_port           = 22
+  protocol          = "tcp"
+  cidr_blocks       = [aws_vpc.my_custom_vpc.cidr_block]
+  ipv6_cidr_blocks  = [aws_vpc.my_custom_vpc.ipv6_cidr_block]
+  security_group_id = aws_security_group.ssh_access.
 }
 
 resource "aws_instance" "example2" {
