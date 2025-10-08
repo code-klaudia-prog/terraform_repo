@@ -13,17 +13,20 @@ terraform {
   }
 }
 
-resource "aws_instance" "example2" {
-  ami           = "ami-052064a798f08f0d3"
-  instance_type = "t3.micro"
-}
-
 resource "aws_security_group" "ssh_access" {
   ingress {
     from_port = 22
     to_port = 22
     protocol = "tcp"
   }
+}
+
+resource "aws_instance" "example2" {
+  ami           = "ami-052064a798f08f0d3"
+  instance_type = "t3.micro"
+  # vpc_security_group_ids = [
+  #  aws_security_group.ssh_access.id
+  # ]
 }
 
 resource "aws_ssm_document" "that" {
