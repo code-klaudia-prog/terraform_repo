@@ -13,12 +13,12 @@ terraform {
   }
 }
 
-resource "aws_instance" "example" {
+resource "aws_instance" "example2" {
   ami           = "ami-052064a798f08f0d3"
   instance_type = "t3.micro"
 }
 
-resource "aws_ssm_document" "this" {
+resource "aws_ssm_document" "that" {
   name = "bptest"
   content = jsonencode({
     schemaVersion = "2.2"
@@ -51,7 +51,7 @@ resource "aws_ssm_document" "this" {
   document_type = "Command"
 }
 
-resource "aws_ssm_document" "foo" {
+resource "aws_ssm_document" "bar" {
   name          = "test_document"
   document_type = "Command"
 
