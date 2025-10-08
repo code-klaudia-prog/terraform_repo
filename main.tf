@@ -129,3 +129,12 @@ resource "aws_ssm_document" "bar" {
   }
 DOC
 }
+
+resource "aws_ssm_association" "example" {
+  name = aws_ssm_document.that.name
+
+  targets {
+    key    = aws_instance.example2
+    values = [aws_instance.example2]
+  }
+}
