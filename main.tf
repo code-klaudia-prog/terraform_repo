@@ -10,6 +10,10 @@ terraform {
       source = "risqcapital/risqaws"
       version = "1.0.0"
     }
+    aws = {
+      source  = "hashicorp/aws"
+      version = ">= 3.0.0"
+    }
   }
 }
 
