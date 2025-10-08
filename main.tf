@@ -134,7 +134,7 @@ resource "aws_ssm_association" "example" {
   name = aws_ssm_document.that.name
 
   targets {
-    key    = aws_instance.example2
-    values = [aws_instance.example2]
+    key    = aws_instance.example2.id
+    values = [aws_instance.example2.id]
   }
 }
