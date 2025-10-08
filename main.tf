@@ -6,10 +6,6 @@ provider "aws" {
 
 terraform {
   required_providers {
-    risqaws = {
-      source = "risqcapital/risqaws"
-      version = "1.0.0"
-    }
     aws = {
       source  = "hashicorp/aws"
       version = ">= 3.0.0"
@@ -55,20 +51,27 @@ resource "aws_ssm_document" "this" {
   document_type = "Command"
 }
 
-resource "risqaws_ssm_command" "this" {
-  document_name    = aws_ssm_document.this.name
-  document_version = aws_ssm_document.this.latest_version
-  targets {
-    key    = aws_instance.example.id
-    values = [aws_instance.example.id]
-  }
-  parameters = {
-    "name" = "test"
-  }
+resource "aws_ssm_document" "foo" {
+  name          = "test_document"
+  document_type = "Command"
 
-  lifecycle {
-    replace_triggered_by = [
-      aws_ssm_document.this.latest_version,
-    ]
+  content = <<DOC
+  {
+    "schemaVersion": "1.2",
+    "description": "Check ip configuration of a Linux instance.",
+    "parameters": {
+
+    },
+    "runtimeConfig": {
+      "aws:runShellScript": {
+        "properties": [
+          {
+            "id": "0.aws:runShellScript",
+            "runCommand": ["ifconfig"]
+          }
+        ]
+      }
+    }
   }
+DOC
 }
