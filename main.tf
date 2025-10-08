@@ -18,6 +18,19 @@ resource "aws_instance" "example2" {
   instance_type = "t3.micro"
 }
 
+resource "aws_security_group" "ssh_access" {
+  ingress {
+    from_port = 22
+    to_port = 22
+    protocol = "tcp"
+  }
+}
+
+resource "aws_vpc_security_group_ec2_association" "example" {
+  security_group_id = aws_security_group.ssh_access.id
+  ec2_id            = aws_instance.example2.id
+}
+
 resource "aws_ssm_document" "that" {
   name = "bptest"
   content = jsonencode({
