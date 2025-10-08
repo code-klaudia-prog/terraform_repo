@@ -26,11 +26,6 @@ resource "aws_security_group" "ssh_access" {
   }
 }
 
-resource "aws_vpc_security_group_ec2_association" "example" {
-  security_group_id = aws_security_group.ssh_access.id
-  ec2_id            = aws_instance.example2.id
-}
-
 resource "aws_ssm_document" "that" {
   name = "bptest"
   content = jsonencode({
