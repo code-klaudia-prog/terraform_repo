@@ -13,6 +13,35 @@ terraform {
   }
 }
 
+# Create a new VPC
+resource "aws_vpc" "my_custom_vpc" {
+  cidr_block           = "10.0.0.0/16"
+  enable_dns_support   = true
+  enable_dns_hostnames = true
+  tags = {
+    Name = "ssm"
+  }
+}
+
+# Create a Public Subnet within the VPC
+resource "aws_subnet" "public_subnet" {
+  vpc_id                  = aws_vpc.my_custom_vpc.id
+  cidr_block              = "10.0.1.0/24"
+  map_public_ip_on_launch = true # This allows the EC2 instance to get a public IP
+  availability_zone       = "us-east-1a"
+  tags = {
+    Name = "ssm"
+  }
+}
+
+# Create an Internet Gateway (IGW)
+resource "aws_internet_gateway" "my_igw" {
+  vpc_id = aws_vpc.my_custom_vpc.id
+  tags = {
+    Name = "ssm"
+  }
+}
+
 resource "aws_security_group" "ssh_access" {
   ingress {
     from_port = 22
@@ -24,9 +53,9 @@ resource "aws_security_group" "ssh_access" {
 resource "aws_instance" "example2" {
   ami           = "ami-052064a798f08f0d3"
   instance_type = "t3.micro"
-  # vpc_security_group_ids = [
-  #  aws_security_group.ssh_access.id
-  # ]
+  vpc_security_group_ids = [
+    aws_security_group.ssh_access.id
+  ]
 }
 
 resource "aws_ssm_document" "that" {
