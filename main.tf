@@ -137,7 +137,7 @@ resource "aws_route_table_association" "public_subnet_association" {
 # Adiciona uma rota 0.0.0.0/0 (todo o tráfego) para o Internet Gateway na Tabela de Rotas pública
 
 resource "aws_route" "routes" {
-  route_table_id         = route_table_cesae.public.id
+  route_table_id         = aws_route_table.route_table_cesae.id
   destination_cidr_block = "0.0.0.0/0"
   # gateway_id             = aws_internet_gateway.cesae_internet.id
   
