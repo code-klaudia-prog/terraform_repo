@@ -118,14 +118,34 @@ resource "aws_instance" "ec2_prinvate_instance" {
   # associate_public_ip_address = true 
 }
 
-resource "aws_route_table" "route_table_cesae" {
-  vpc_id = module.vpc.vpc_id
-}
-
 # Create an Internet Gateway (IGW)
 # resource "aws_internet_gateway" "cesae_internet_gw" {
 #  vpc_id      = module.vpc.vpc_id
 #}
+
+resource "aws_route_table" "route_table_cesae" {
+  vpc_id = module.vpc.vpc_id
+}
+
+# Associação da Route Table a uma Sub-rede
+resource "aws_route_table_association" "public_subnet_association" {
+  subnet_id      = "subnet-02d4a2b3dcd6f3461"
+  route_table_id = aws_route_table.route_table_cesae.id
+}
+
+# Atualização da Tabela de Rotas Pública
+# Adiciona uma rota 0.0.0.0/0 (todo o tráfego) para o Internet Gateway na Tabela de Rotas pública
+
+resource "aws_route" "routes" {
+  route_table_id         = route_table_cesae.public.id
+  destination_cidr_block = "0.0.0.0/0"
+  # gateway_id             = aws_internet_gateway.cesae_internet.id
+  
+  # depends_on = [
+  #  aws_internet_gateway.main_igw
+  # ]
+}
+
 
 # Nao fora usados key-pairs de acesso a nehua das instancias
 # resource "aws_key_pair" "deployer" {
