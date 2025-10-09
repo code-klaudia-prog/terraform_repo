@@ -44,11 +44,6 @@ module "vpc" {
   single_nat_gateway     = false
   enable_dns_hostnames   = true
   enable_dns_support     = true
-  tags = {
-    Terraform   = "true"
-    Ambiente    = "Desenvolvimento"
-    Projeto     = "cesae"
-  }
 }
 
 # Security Group Deployment is linked to the VPC
@@ -71,10 +66,10 @@ resource "aws_security_group" "bastion_host_sg_cesae" {
 # Bastion Host
 resource "aws_instance" "bastion_host_cesae" {
   ami           = "ami-052064a798f08f0d3"
- instance_type = "t3.micro"
+  instance_type = "t3.micro"
   
   # Associação à sub-rede publica "10.0.3.0/24" denominada de "vpc-avancada-tf-public-us-east-1a"
-  subnet_id = "subnet-0e8280d1b860487a8" # PESSIMA IDEIA TER O ID DA SUBNET HARDCODED!!!!
+  subnet_id = "subnet-02d4a2b3dcd6f3461" # PESSIMA IDEIA TER O ID DA SUBNET HARDCODED!!!!
   
   # Associação do Bastion Host ao Security Group
   vpc_security_group_ids = [aws_security_group.bastion_host_sg_cesae.id] 
@@ -123,7 +118,7 @@ resource "aws_instance" "ec2_prinvate_instance" {
   # key_name    = aws_key_pair.deployer.key_name
 
   # Associação à sub-rede
-  subnet_id     = "subnet-07f0aaa3d19313980" 
+  subnet_id     = "subnet-0992a72db930293a9" 
 
   # Associação ao Security Group
   vpc_security_group_ids = [aws_security_group.private_instance_sg_cesae.id]   
@@ -132,6 +127,6 @@ resource "aws_instance" "ec2_prinvate_instance" {
 }
 
 # Create an Internet Gateway (IGW)
-resource "aws_internet_gateway" "cesae_internet_gw" {
-  vpc_id      = module.vpc.vpc_id
-}
+# resource "aws_internet_gateway" "cesae_internet_gw" {
+#  vpc_id      = module.vpc.vpc_id
+#}
