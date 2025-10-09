@@ -136,15 +136,15 @@ resource "aws_route_table_association" "public_subnet_association" {
 # Atualização da Tabela de Rotas Pública
 # Adiciona uma rota 0.0.0.0/0 (todo o tráfego) para o Internet Gateway na Tabela de Rotas pública
 
-resource "aws_route" "routes" {
-  route_table_id         = aws_route_table.route_table_cesae.id
-  destination_cidr_block = "0.0.0.0/0"
-  gateway_id             = "igw-066086c66869cb543"
-  
-  # depends_on = [
-  #  aws_internet_gateway.main_igw
-  # ]
-}
+# resource "aws_route" "routes" {
+#   route_table_id         = aws_route_table.route_table_cesae.id
+#   destination_cidr_block = "0.0.0.0/0"
+#   gateway_id             = "igw-066086c66869cb543"
+#   
+#   # depends_on = [
+#   #  aws_internet_gateway.main_igw
+#   # ]
+# }
 
 
 # Nao fora usados key-pairs de acesso a nehua das instancias
