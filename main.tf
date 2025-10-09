@@ -128,10 +128,10 @@ resource "aws_route_table" "route_table_cesae" {
 }
 
 # Associação da Route Table a uma Sub-rede
-resource "aws_route_table_association" "public_subnet_association" {
-  subnet_id      = "subnet-02d4a2b3dcd6f3461"
-  route_table_id = aws_route_table.route_table_cesae.id
-}
+# resource "aws_route_table_association" "public_subnet_association" {
+#   subnet_id      = "subnet-02d4a2b3dcd6f3461"
+#   route_table_id = aws_route_table.route_table_cesae.id
+# }
 
 # Atualização da Tabela de Rotas Pública
 # Adiciona uma rota 0.0.0.0/0 (todo o tráfego) para o Internet Gateway na Tabela de Rotas pública
