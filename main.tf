@@ -126,12 +126,12 @@ resource "aws_instance" "ec2_prinvate_instance" {
   subnet_id     = "subnet-07f0aaa3d19313980" 
 
   # Associação ao Security Group
-  vpc_security_group_ids = [aws_security_group.private_instance__sg_cesae.id]   
+  vpc_security_group_ids = [aws_security_group.private_instance_sg_cesae.id]   
   # Desligaria a atribuição automática de IP público (característica da subnet privada). Isto se o TF Cloud nao estivesse a dar erro
   # associate_public_ip_address = true 
 }
 
 # Create an Internet Gateway (IGW)
-resource "aws_internet_gateway" "cesae_igw" {
+resource "aws_internet_gateway" "cesae_internet_gw" {
   vpc_id      = module.vpc.vpc_id
 }
