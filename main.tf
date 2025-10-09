@@ -137,9 +137,8 @@ resource "aws_instance" "ec2_prinvate_instance" {
 
   # Associação ao Security Group
   vpc_security_group_ids = [aws_security_group.private_ec2.id]   
-
-  # Desliga a atribuição automática de IP público (característica da subnet privada)
-  associate_public_ip_address = true 
+  # Desligaria a atribuição automática de IP público (característica da subnet privada). Isto se o TF Cloud nao estivesse a dar erro
+  # associate_public_ip_address = true 
 }
 
 # Create an Internet Gateway (IGW)
