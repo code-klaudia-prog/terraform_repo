@@ -68,7 +68,7 @@ resource "aws_instance" "bastion_host_cesae" {
   instance_type = "t3.micro"
   
   # Associação à sub-rede publica "10.0.3.0/24" denominada de "vpc-avancada-tf-public-us-east-1a"
-  subnet_id = "subnet-02d4a2b3dcd6f3461" # PESSIMA IDEIA TER O ID DA SUBNET HARDCODED!!!!
+  subnet_id = "subnet-0091a2e642c315620"
   
   # Associação do Bastion Host ao Security Group
   vpc_security_group_ids = [aws_security_group.bastion_host_sg_cesae.id] 
@@ -110,7 +110,7 @@ resource "aws_instance" "ec2_prinvate_instance" {
   # key_name    = aws_key_pair.deployer.key_name
 
   # Associação à sub-rede
-  subnet_id     = "subnet-0992a72db930293a9" 
+  subnet_id     = "subnet-050807b4f666d2fba" 
 
   # Associação ao Security Group
   vpc_security_group_ids = [aws_security_group.private_instance_sg_cesae.id]   
@@ -129,7 +129,7 @@ resource "aws_route_table" "route_table_cesae" {
 
 # Associação da Route Table a uma Sub-rede
 # resource "aws_route_table_association" "public_subnet_association" {
-#   subnet_id      = "subnet-02d4a2b3dcd6f3461"
+#   subnet_id      = "subnet-04739797f63750e7b"
 #   route_table_id = aws_route_table.route_table_cesae.id
 # }
 
