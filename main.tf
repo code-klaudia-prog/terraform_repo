@@ -13,128 +13,136 @@ terraform {
   }
 }
 
-# Create a new VPC
-resource "aws_vpc" "my_custom_vpc" {
-  cidr_block           = "10.0.0.0/16"
-  enable_dns_support   = true
-  enable_dns_hostnames = true
-  tags = {
-    Name = "ssm"
+provider "aws" {
+  region = "us-east-1" 
+}
+
+terraform {
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = ">= 3.0.0"
+    }
   }
 }
 
-# Create a Public Subnet within the VPC
-resource "aws_subnet" "public_subnet" {
-  vpc_id                  = aws_vpc.my_custom_vpc.id
-  cidr_block              = "10.0.1.0/24"
-  associate_public_ip_address = true
-  availability_zone       = "us-east-1a"
+data "aws_availability_zones" "available" {
+  state = "available"
+}
+
+# Create VPC, subnets and NAT Gateways
+
+module "vpc" {
+  source  = "terraform-aws-modules/vpc/aws"
+  version = "~> 5.0" # Use a versão mais recente e estável
+
+  # VPC CIDR Block
+  name = "vpc-avancada-tf"
+  cidr = "10.0.0.0/16"
+
+  # Multiple AZ Distribution
+  azs             = slice(data.aws_availability_zones.available.names, 0, 2)
+  
+  # CIDRs for Public Subnets
+  public_subnets  = ["10.0.1.0/24", "10.0.3.0/24"]
+  
+  # CIDRs for Private Subnets
+  private_subnets = ["10.0.2.0/24", "10.0.4.0/24"]
+
+  # Gateways Configuration
+  enable_nat_gateway     = true  
+  single_nat_gateway     = false
+  enable_dns_hostnames   = true
+  enable_dns_support     = true
   tags = {
-    Name = "ssm"
+    Terraform   = "true"
+    Ambiente    = "Desenvolvimento"
+    Projeto     = "VPC Avancada"
   }
+}
+
+# Security Group Deployment is linked to the VPC
+resource "aws_security_group" "bastion_sg" {
+  name        = "private-instance-sg"
+  description = "Bastion host SG"
+  vpc_id      = module.vpc.vpc_id
+
+  # Inbound Rule - Allows all SSH conections from the outside (from the Internet Gateway)
+  ingress {
+    from_port   = 22
+    to_port     = 22
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  # Outbound Rule is not needed because, by default, it allows all traffic to leave 
+}
+
+# Bastion Host
+resource "aws_instance" "bastion_host" {
+  ami           = "ami-052064a798f08f0d3"
+ instance_type = "t3.micro"
+  
+  # Associação à sub-rede publica "10.0.3.0/24" denominada de "vpc-avancada-tf-public-us-east-1a"
+  subnet_id = "subnet-0e8280d1b860487a8"
+  
+  # Associação ao Security Group
+  vpc_security_group_ids = [aws_security_group.bastion_sg.id] 
+  
+  # Como é um Bastion Host numa sub-rede pública, deve ter um IP público associado
+  associate_public_ip_address = true 
+}
+
+
+# Private EC2 Part
+# Create a Security Group for the private EC2 instance
+resource "aws_security_group" "private_ec2" {
+  name        = "private-ec2-instance-sg"
+  description = "Security group for private instance"
+  vpc_id      = module.vpc.vpc_id
+
+  # Inbound Rule - Allows SSH conection from the outside into the VPC through the Bastion Host
+  ingress {
+    description = "Allow SSH from within VPC CIDR"
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    # Allows SSH acces by any resource within the VPC (10.0.0.0/16)
+    cidr_blocks = [module.vpc.vpc_cidr_block]
+  }
+
+  # Outbound Rule -This is what allows the NAT Gateway test
+  # It allows all outbound traffic (routed trhough the NAT Gateway)
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
+# Create a Key Pair for SSH access to access the EC2 instance through Bastion Host
+# resource "aws_key_pair" "deployer" {
+#  key_name   = "private-instance-key"
+#  public_key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC4" # Replace
+#}
+
+resource "aws_instance" "ec2_prinvate_instance" {
+  ami           = "ami-052064a798f08f0d3"                         # AMI válido e North Virginia
+  instance_type = "t3.micro"  
+  # key_name    = aws_key_pair.deployer.key_name
+
+  # Associação à sub-rede
+  subnet_id     = "subnet-07f0aaa3d19313980" 
+
+  # Associação ao Security Group
+  vpc_security_group_ids = [aws_security_group.private_ec2.id]   
+
+  # Desliga a atribuição automática de IP público (característica da subnet privada)
+  associate_public_ip_address = true 
 }
 
 # Create an Internet Gateway (IGW)
 resource "aws_internet_gateway" "my_igw" {
-  vpc_id = aws_vpc.my_custom_vpc.id
-  tags = {
-    Name = "ssm"
-  }
-}
-
-resource "aws_security_group" "ssh_access" {
-  ingress {
-    from_port = 22
-    to_port = 22
-    protocol = "tcp"
-  }
-}
-
-resource "aws_security_group_rule" "example" {
-  type              = "ingress"
-  from_port         = 22
-  to_port           = 22
-  protocol          = "tcp"
-  cidr_blocks       = [aws_vpc.my_custom_vpc.cidr_block]
-  security_group_id = aws_security_group.ssh_access.id
-}
-
-resource "aws_instance" "example2" {
-  ami           = "ami-052064a798f08f0d3"
-  instance_type = "t3.micro"
-  vpc_security_group_ids = [
-    aws_security_group.ssh_access.id
-  ]
-}
-
-resource "aws_vpc_security_group_vpc_association" "example2" {
-  security_group_id = aws_security_group.ssh_access.id
-  vpc_id            = aws_vpc.my_custom_vpc.id
-}
-
-resource "aws_ssm_document" "that" {
-  name = "bptest"
-  content = jsonencode({
-    schemaVersion = "2.2"
-    description   = "BPTest"
-    parameters = {
-      name = {
-        type        = "String"
-        description = "Name"
-        default     = "World"
-      }
-    }
-    mainSteps = [
-      {
-        precondition = {
-          StringEquals = [
-            "platformType",
-            "Linux"
-          ]
-        }
-        action = "aws:runShellScript",
-        name   = "Test",
-        inputs = {
-          runCommand = [
-            "echo Hello {{ name }} && sleep 10s && exit 0"
-          ]
-        }
-      }
-    ]
-  })
-  document_type = "Command"
-}
-
-resource "aws_ssm_document" "bar" {
-  name          = "test_document"
-  document_type = "Command"
-
-  content = <<DOC
-  {
-    "schemaVersion": "1.2",
-    "description": "Check ip configuration of a Linux instance.",
-    "parameters": {
-
-    },
-    "runtimeConfig": {
-      "aws:runShellScript": {
-        "properties": [
-          {
-            "id": "0.aws:runShellScript",
-            "runCommand": ["ifconfig"]
-          }
-        ]
-      }
-    }
-  }
-DOC
-}
-
-resource "aws_ssm_association" "example" {
-  name = aws_ssm_document.that.name
-
-  targets {
-    key    = aws_instance.example2.id
-    values = [aws_instance.example2.id]
-  }
+  vpc_id      = module.vpc.vpc_id
 }
