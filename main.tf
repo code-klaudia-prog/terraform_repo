@@ -58,8 +58,8 @@ resource "aws_security_group" "bastion_sg" {
 
   # Inbound Rule - Allows all SSH conections from the outside (from the Internet Gateway)
   ingress {
-    from_port   = 22
-    to_port     = 22
+    from_port   = 0
+    to_port     = 0
     protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
   }
