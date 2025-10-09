@@ -139,7 +139,7 @@ resource "aws_route_table_association" "public_subnet_association" {
 resource "aws_route" "routes" {
   route_table_id         = aws_route_table.route_table_cesae.id
   destination_cidr_block = "0.0.0.0/0"
-  # gateway_id             = aws_internet_gateway.cesae_internet.id
+  gateway_id             = "igw-07d62f391cdecdcc3"
   
   # depends_on = [
   #  aws_internet_gateway.main_igw
