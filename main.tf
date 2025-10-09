@@ -1,10 +1,10 @@
 
-# 1. Configuração do Provedor AWS (Onde os seus recursos de nuvem serão criados)
+# Configuração do Provedor AWS
 provider "aws" {
   region = "us-east-1" 
 }
 
-# 2. Configuração do Provedor TFE (Para interagir com o Terraform Cloud API)
+# 2. Configuração do Provedor TFE (Interagir com a TF Cloud API)
 terraform {
   required_version = ">= 0.12"
 
@@ -27,7 +27,7 @@ module "vpc" {
   version = "~> 5.0" # Use a versão mais recente e estável
 
   # VPC CIDR Block
-  name = "vpc-avancada-tf"
+  name = "cesae-final-project"
   cidr = "10.0.0.0/16"
 
   # Multiple AZ Distribution
@@ -47,12 +47,12 @@ module "vpc" {
   tags = {
     Terraform   = "true"
     Ambiente    = "Desenvolvimento"
-    Projeto     = "VPC Avancada"
+    Projeto     = "cesae"
   }
 }
 
 # Security Group Deployment is linked to the VPC
-resource "aws_security_group" "bastion_sg" {
+resource "aws_security_group" "bastion_host_sg_cesae" {
   name        = "private-instance-sg"
   description = "Bastion host SG"
   vpc_id      = module.vpc.vpc_id
@@ -69,15 +69,15 @@ resource "aws_security_group" "bastion_sg" {
 }
 
 # Bastion Host
-resource "aws_instance" "bastion_host" {
+resource "aws_instance" "bastion_host_cesae" {
   ami           = "ami-052064a798f08f0d3"
  instance_type = "t3.micro"
   
   # Associação à sub-rede publica "10.0.3.0/24" denominada de "vpc-avancada-tf-public-us-east-1a"
-  subnet_id = "subnet-0e8280d1b860487a8"
+  subnet_id = "subnet-0e8280d1b860487a8" # PESSIMA IDEIA TER O ID DA SUBNET HARDCODED!!!!
   
-  # Associação ao Security Group
-  vpc_security_group_ids = [aws_security_group.bastion_sg.id] 
+  # Associação do Bastion Host ao Security Group
+  vpc_security_group_ids = [aws_security_group.bastion_host_sg_cesae.id] 
   
   # Como é um Bastion Host numa sub-rede pública, deve ter um IP público associado
   associate_public_ip_address = true 
@@ -86,8 +86,8 @@ resource "aws_instance" "bastion_host" {
 
 # Private EC2 Part
 # Create a Security Group for the private EC2 instance
-resource "aws_security_group" "private_ec2" {
-  name        = "private-ec2-instance-sg"
+resource "aws_security_group" "private_instance_sg_cesae" {
+  name        = "private_instance__sg_cesae"
   description = "Security group for private instance"
   vpc_id      = module.vpc.vpc_id
 
@@ -126,12 +126,12 @@ resource "aws_instance" "ec2_prinvate_instance" {
   subnet_id     = "subnet-07f0aaa3d19313980" 
 
   # Associação ao Security Group
-  vpc_security_group_ids = [aws_security_group.private_ec2.id]   
+  vpc_security_group_ids = [aws_security_group.private_instance__sg_cesae.id]   
   # Desligaria a atribuição automática de IP público (característica da subnet privada). Isto se o TF Cloud nao estivesse a dar erro
   # associate_public_ip_address = true 
 }
 
 # Create an Internet Gateway (IGW)
-resource "aws_internet_gateway" "my_igw" {
+resource "aws_internet_gateway" "cesae_igw" {
   vpc_id      = module.vpc.vpc_id
 }
