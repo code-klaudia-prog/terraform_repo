@@ -1,10 +1,10 @@
 
-# Configuração do Provedor AWS
+# Configuração do Providor AWS
 provider "aws" {
   region = "us-east-1" 
 }
 
-# 2. Configuração do Provedor TFE (Interagir com a TF Cloud API)
+# Configuração do Providor TFE (Interage com a TF Cloud API)
 terraform {
   required_version = ">= 0.12"
 
@@ -20,8 +20,7 @@ data "aws_availability_zones" "available" {
   state = "available"
 }
 
-# Create VPC, subnets and NAT Gateways
-
+# Criacao VPC, Subnets e NAT Gateways
 module "vpc" {
   source  = "terraform-aws-modules/vpc/aws"
   version = "~> 5.0" # Use a versão mais recente e estável
@@ -46,7 +45,7 @@ module "vpc" {
   enable_dns_support     = true
 }
 
-# Security Group Deployment is linked to the VPC
+# Deployment do Security Group do Bastion Host (associado a VPC)
 resource "aws_security_group" "bastion_host_sg_cesae" {
   name        = "private-instance-sg"
   description = "Bastion host SG"
@@ -63,7 +62,7 @@ resource "aws_security_group" "bastion_host_sg_cesae" {
   # Outbound Rule is not needed because, by default, it allows all traffic to leave 
 }
 
-# Bastion Host
+# Deployment do Bastion Host na subrede publica
 resource "aws_instance" "bastion_host_cesae" {
   ami           = "ami-052064a798f08f0d3"
   instance_type = "t3.micro"
@@ -78,9 +77,7 @@ resource "aws_instance" "bastion_host_cesae" {
   associate_public_ip_address = true 
 }
 
-
-# Private EC2 Part
-# Create a Security Group for the private EC2 instance
+# Criacao do Security Group da instancia EC2 instance (associado a VPC)
 resource "aws_security_group" "private_instance_sg_cesae" {
   name        = "private_instance__sg_cesae"
   description = "Security group for private instance"
@@ -106,12 +103,7 @@ resource "aws_security_group" "private_instance_sg_cesae" {
   }
 }
 
-# Create a Key Pair for SSH access to access the EC2 instance through Bastion Host
-# resource "aws_key_pair" "deployer" {
-#  key_name   = "private-instance-key"
-#  public_key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC4" # Replace
-#}
-
+# Deployent da instancia EC2 na subrede privada
 resource "aws_instance" "ec2_prinvate_instance" {
   ami           = "ami-052064a798f08f0d3"                         # AMI válido e North Virginia
   instance_type = "t3.micro"  
@@ -126,7 +118,17 @@ resource "aws_instance" "ec2_prinvate_instance" {
   # associate_public_ip_address = true 
 }
 
+resource "aws_route_table" "route_table_cesae" {
+  vpc_id = module.vpc.vpc_id
+}
+
 # Create an Internet Gateway (IGW)
 # resource "aws_internet_gateway" "cesae_internet_gw" {
 #  vpc_id      = module.vpc.vpc_id
+#}
+
+# Nao fora usados key-pairs de acesso a nehua das instancias
+# resource "aws_key_pair" "deployer" {
+#  key_name   = "private-instance-key"
+#  public_key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC4" # Replace
 #}
