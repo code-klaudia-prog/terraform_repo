@@ -10,7 +10,7 @@ terraform {
     # Define a fonte e a versão do provedor TFE
     tfe = {
       source  = "hashicorp/tfe"
-      version = "~> 0.70.0"
+      version = ">= 3.0.0"
     }
   }
 }
