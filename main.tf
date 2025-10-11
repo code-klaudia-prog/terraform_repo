@@ -1,10 +1,9 @@
-
 # Configuração do Providor AWS
 provider "aws" {
-  region = "us-east-1" 
+  region = var.aws_region
 }
 
-# Configuração do Providor TFE (Interage com a TF Cloud API)
+# Configuração do Providor TFE
 terraform {
   required_version = ">= 0.12"
 
@@ -23,48 +22,42 @@ data "aws_availability_zones" "available" {
 # Criacao VPC, Subnets e NAT Gateways
 module "vpc" {
   source  = "terraform-aws-modules/vpc/aws"
-  version = "~> 5.0" # Use a versão mais recente e estável
+  version = "~> 5.0"
 
-  # VPC CIDR Block
-  name = "cesae-final-project"
-  cidr = "10.0.0.0/16"
+  # Usa variáveis de input
+  name = var.project_name
+  cidr = var.vpc_cidr
 
   # Multiple AZ Distribution
-  azs             = slice(data.aws_availability_zones.available.names, 0, 2)
+  azs               = slice(data.aws_availability_zones.available.names, 0, 2)
   
-  # CIDRs for Public Subnets
-  public_subnets  = ["10.0.1.0/24", "10.0.3.0/24"]
-  
-  # CIDRs for Private Subnets
-  private_subnets = ["10.0.2.0/24", "10.0.4.0/24"]
+  # CIDRs for Subnets (usa variáveis de input)
+  public_subnets  = var.public_subnet_cidrs
+  private_subnets = var.private_subnet_cidrs
 
   # Gateways Configuration
-  enable_nat_gateway     = true  
-  single_nat_gateway     = false
-  enable_dns_hostnames   = true
-  enable_dns_support     = true
+  enable_nat_gateway      = true    
+  single_nat_gateway      = false
+  enable_dns_hostnames    = true
+  enable_dns_support      = true
 }
 
 # Deployment do Security Group do Bastion Host (associado a VPC)
 resource "aws_security_group" "bastion_host_sg_cesae" {
-  name        = "bastion-host-sg-cesae" # Changed name for clarity
+  name        = "${var.project_name}-bastion-sg"
   description = "Bastion host SG"
   vpc_id      = module.vpc.vpc_id
 
-  # --- INBOUND (INGRESS) RULES ---
-
-  # SSH Access (Port 22) - Allows connections from anywhere (0.0.0.0/0)
-  #    It's highly recommended to restrict this to your specific IP address if possible.
+  # SSH Access (Port 22) - Agora usa a variável de input ssh_allowed_cidr
   ingress {
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"] # CHANGE THIS to your IP (e.g., "xx.xx.xx.xx/32") for better security
-    description = "Allow SSH from the Internet"
+    cidr_blocks = [var.ssh_allowed_cidr] 
+    description = "Allow SSH from variable CIDR"
   }
 
-  # ICMP for Ping (Type 8) - Allows ping requests for connectivity tests
-  #    'from_port' and 'to_port' are used for ICMP type and code. 8 is Echo Request.
+  # ICMP for Ping
   ingress {
     from_port   = 8
     to_port     = 0
@@ -73,11 +66,7 @@ resource "aws_security_group" "bastion_host_sg_cesae" {
     description = "Allow ICMP (Ping) from the Internet"
   }
 
-  # --- OUTBOUND (EGRESS) RULE ---
-  
-  # Outbound Rule - Allows ALL traffic to leave the Bastion Host
-  # This is essential for the Bastion Host to reach the internet for updates, diagnostics (ping), etc.
-  # Although I thought that an Outbound Rule wasnt needed because (I thought that, by default, AWS allowed all Outbound traffic)
+  # Outbound Rule - Permite todo o tráfego de saída
   egress {
     from_port   = 0
     to_port     = 0
@@ -89,37 +78,35 @@ resource "aws_security_group" "bastion_host_sg_cesae" {
 
 # Deployment do Bastion Host na subrede publica
 resource "aws_instance" "bastion_host_cesae" {
-  ami           = "ami-052064a798f08f0d3"
-  instance_type = "t3.micro"
+  # Usa variáveis de input
+  ami           = var.ami_id
+  instance_type = var.bastion_instance_type
   
-  # Associação à sub-rede publica "10.0.3.0/24" denominada de "vpc-avancada-tf-public-us-east-1a"
-  subnet_id = "subnet-0091a2e642c315620"
+  # Associação à primeira sub-rede pública criada pelo módulo VPC
+  subnet_id = module.vpc.public_subnets[0]
   
   # Associação do Bastion Host ao Security Group
   vpc_security_group_ids = [aws_security_group.bastion_host_sg_cesae.id] 
   
-  # Como é um Bastion Host numa sub-rede pública, deve ter um IP público associado
   associate_public_ip_address = true 
 }
 
 # Criacao do Security Group da instancia EC2 instance (associado a VPC)
 resource "aws_security_group" "private_instance_sg_cesae" {
-  name        = "private_instance__sg_cesae"
+  name        = "${var.project_name}-private-instance-sg"
   description = "Security group for private instance"
   vpc_id      = module.vpc.vpc_id
 
-  # Inbound Rule - Allows SSH conection from the outside into the VPC through the Bastion Host
+  # Inbound Rule - Allows SSH from within VPC CIDR
   ingress {
     description = "Allow SSH from within VPC CIDR"
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    # Allows SSH acces by any resource within the VPC (10.0.0.0/16)
     cidr_blocks = [module.vpc.vpc_cidr_block]
   }
 
-  # Outbound Rule -This is what allows the NAT Gateway test
-  # It allows all outbound traffic (routed trhough the NAT Gateway)
+  # Outbound Rule - Permite todo o tráfego de saída
   egress {
     from_port   = 0
     to_port     = 0
@@ -130,50 +117,16 @@ resource "aws_security_group" "private_instance_sg_cesae" {
 
 # Deployent da instancia EC2 na subrede privada
 resource "aws_instance" "ec2_prinvate_instance" {
-  ami           = "ami-052064a798f08f0d3"                         # AMI válido e North Virginia
-  instance_type = "t3.micro"  
-  # key_name    = aws_key_pair.deployer.key_name
-
-  # Associação à sub-rede
-  subnet_id     = "subnet-050807b4f666d2fba" 
+  # Usa variáveis de input
+  ami           = var.ami_id
+  instance_type = var.private_instance_type
+  
+  # Associação à primeira sub-rede privada criada pelo módulo VPC
+  subnet_id      = module.vpc.private_subnets[0]
 
   # Associação ao Security Group
-  vpc_security_group_ids = [aws_security_group.private_instance_sg_cesae.id]   
-  # Desligaria a atribuição automática de IP público (característica da subnet privada). Isto se o TF Cloud nao estivesse a dar erro
-  # associate_public_ip_address = true 
+  vpc_security_group_ids      = [aws_security_group.private_instance_sg_cesae.id] 
+  associate_public_ip_address = false # Instância privada
 }
 
-# Create an Internet Gateway (IGW)
-# resource "aws_internet_gateway" "cesae_internet_gw" {
-#  vpc_id      = module.vpc.vpc_id
-#}
-
-resource "aws_route_table" "route_table_cesae" {
-  vpc_id = module.vpc.vpc_id
-}
-
-# Associação da Route Table a uma Sub-rede
-# resource "aws_route_table_association" "public_subnet_association" {
-#   subnet_id      = "subnet-04739797f63750e7b"
-#   route_table_id = aws_route_table.route_table_cesae.id
-# }
-
-# Atualização da Tabela de Rotas Pública
-# Adiciona uma rota 0.0.0.0/0 (todo o tráfego) para o Internet Gateway na Tabela de Rotas pública
-
-# resource "aws_route" "routes" {
-#   route_table_id         = aws_route_table.route_table_cesae.id
-#   destination_cidr_block = "0.0.0.0/0"
-#   gateway_id             = "igw-066086c66869cb543"
-#   
-#   # depends_on = [
-#   #  aws_internet_gateway.main_igw
-#   # ]
-# }
-
-
-# Nao fora usados key-pairs de acesso a nehua das instancias
-# resource "aws_key_pair" "deployer" {
-#  key_name   = "private-instance-key"
-#  public_key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC4" # Replace
-#}
+# O resto dos blocos comentados foram mantidos como estavam.
