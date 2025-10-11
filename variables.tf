@@ -1,76 +1,53 @@
-data "aws_caller_identity" "current" {}
-data "aws_region" "current" {}
-
-
-# NOTES: Must configure preferences in Systems manager Console after deploying- use the resources created to fill in KMS ID and CloudWatch Logs Group
-variable "private_subnet"{
-  type        = bool
-  description = "Conditional variable to determine if the EC2 instance is deployed in a private subnet. Set to TRUE if it is."
-  default     = false
-}
-
-# variable "tags" {    
-#   description = "Common tags that should be used on specific resources"
-#   type        = map(string)
-#   default     = 
-# }
-
-variable "ssm_policy_arn" {
-  type    = string
-  default = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
-}
-
-variable "vpc_id" {
+variable "aws_region" {
+  description = "A região AWS onde os recursos serão criados."
   type        = string
-  description = "The ID of the VPC to deploy the infrastructure."
-  default     = ""
+  default     = "us-east-1"
 }
 
-variable "ami" {
+variable "ami_id" {
+  description = "O ID da AMI para as instâncias EC2."
   type        = string
-  description = "AMI for the EC2:"
-  default     = ""
+  default     = "ami-052064a798f08f0d3" # AMI válido em us-east-1
 }
 
-variable "instance_type" {
+variable "project_name" {
+  description = "Nome base para a VPC e outros recursos."
   type        = string
-  description = "Type of instance to be created:"
-  default     = ""
+  default     = "cesae-final-project"
 }
 
-variable "ssm_role" {
+variable "vpc_cidr" {
+  description = "Bloco CIDR para a VPC."
   type        = string
-  description = "The name of the role to be assigned to the instance profile:"
-  default     = ""
+  default     = "10.0.0.0/16"
 }
 
-variable "team" {
+variable "public_subnet_cidrs" {
+  description = "Lista de blocos CIDR para as sub-redes públicas."
+  type        = list(string)
+  default     = ["10.0.1.0/24", "10.0.3.0/24"]
+}
+
+variable "private_subnet_cidrs" {
+  description = "Lista de blocos CIDR para as sub-redes privadas."
+  type        = list(string)
+  default     = ["10.0.2.0/24", "10.0.4.0/24"]
+}
+
+variable "bastion_instance_type" {
+  description = "Tipo de instância EC2 para o Bastion Host."
   type        = string
-  description = "Name of your team to be appended to the SSM Instance Profile:"
-  default     = ""
+  default     = "t3.micro"
 }
 
-variable "security_group" {
-  description = "Name of the security group to attach to the instance"
+variable "private_instance_type" {
+  description = "Tipo de instância EC2 para a Instância Privada."
   type        = string
-  default     = ""
+  default     = "t3.micro"
 }
 
-variable "s3_bucket" {
+variable "ssh_allowed_cidr" {
+  description = "Bloco CIDR que pode aceder por SSH (Porta 22) ao Bastion Host."
   type        = string
-  description = "Name of the S3 bucket for S3 server side logging of session manager sessions"
-  default     = ""
+  default     = "0.0.0.0/0" # ATENÇÃO: Mudar para o seu IP específico para maior segurança!
 }
-
-variable "s3_log_bucket_id" {
-  type        = string
-  description = "Name of the S3 logging bucket to deliver S3 server logs to. BUCKET MUST BE EXISTING!"
-  default     = ""
-}
-
-
-
-
-
-
-
