@@ -77,6 +77,7 @@ resource "aws_security_group" "bastion_host_sg_cesae" {
   
   # Outbound Rule - Allows ALL traffic to leave the Bastion Host
   # This is essential for the Bastion Host to reach the internet for updates, diagnostics (ping), etc.
+  # Although I thought that an Outbound Rule wasnt needed because (I thought that, by default, AWS allowed all Outbound traffic)
   egress {
     from_port   = 0
     to_port     = 0
@@ -84,9 +85,6 @@ resource "aws_security_group" "bastion_host_sg_cesae" {
     cidr_blocks = ["0.0.0.0/0"]
     description = "Allow all outbound traffic to the Internet"
   }
-}
-
-# Outbound Rule is not needed because, by default, it allows all traffic to leave 
 }
 
 # Deployment do Bastion Host na subrede publica
