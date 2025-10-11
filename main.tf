@@ -47,27 +47,46 @@ module "vpc" {
 
 # Deployment do Security Group do Bastion Host (associado a VPC)
 resource "aws_security_group" "bastion_host_sg_cesae" {
-  name        = "private-instance-sg"
+  name        = "bastion-host-sg-cesae" # Changed name for clarity
   description = "Bastion host SG"
   vpc_id      = module.vpc.vpc_id
 
-  # Inbound Rule - Allows all SSH conections from the outside (from the Internet Gateway)
+  # --- INBOUND (INGRESS) RULES ---
+
+  # SSH Access (Port 22) - Allows connections from anywhere (0.0.0.0/0)
+  #    It's highly recommended to restrict this to your specific IP address if possible.
   ingress {
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"] # CHANGE THIS to your IP (e.g., "xx.xx.xx.xx/32") for better security
+    description = "Allow SSH from the Internet"
+  }
+
+  # ICMP for Ping (Type 8) - Allows ping requests for connectivity tests
+  #    'from_port' and 'to_port' are used for ICMP type and code. 8 is Echo Request.
+  ingress {
+    from_port   = 8
+    to_port     = 0
+    protocol    = "icmp"
+    cidr_blocks = ["0.0.0.0/0"]
+    description = "Allow ICMP (Ping) from the Internet"
+  }
+
+  # --- OUTBOUND (EGRESS) RULE ---
+  
+  # Outbound Rule - Allows ALL traffic to leave the Bastion Host
+  # This is essential for the Bastion Host to reach the internet for updates, diagnostics (ping), etc.
+  egress {
     from_port   = 0
     to_port     = 0
     protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
+    description = "Allow all outbound traffic to the Internet"
   }
+}
 
-  # Inbound Rule - Allows a ping fro the Bastion Host
-  ingress {
-    from_port   = 8
-    to_port     = 0
-    protocol = "icmp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  # Outbound Rule is not needed because, by default, it allows all traffic to leave 
+# Outbound Rule is not needed because, by default, it allows all traffic to leave 
 }
 
 # Deployment do Bastion Host na subrede publica
