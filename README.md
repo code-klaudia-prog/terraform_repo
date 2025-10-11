@@ -1,4 +1,4 @@
-DISCLAIMER :
+# Disclaimer :
 
 - In order to simplify the video, we have been using the correct git workflow
 - Always recall that in a corporative scenario, if you commit to the main branch, youre fired
@@ -7,7 +7,8 @@ DISCLAIMER :
 - Although this is not mandatory, the good practices recommend that the commit message is not
   longer than 72 characters
 
-# Busted - I've been using hardcoded variables all along because I was slopy and in a hurry
+# Busted :
+#### I've been using hardcoded variables all along because I was slopy and in a hurry
 ![Busted](https://github.com/code-klaudia-prog/terraform_repo/blob/main/Screenshots/busted.png)
 
 ### Deployed services
