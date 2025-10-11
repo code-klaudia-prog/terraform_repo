@@ -59,6 +59,14 @@ resource "aws_security_group" "bastion_host_sg_cesae" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
+  # Inbound Rule - Allows a ping fro the Bastion Host
+  ingress {
+    from_port   = 8
+    to_port     = 0
+    protocol = "icmp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
   # Outbound Rule is not needed because, by default, it allows all traffic to leave 
 }
 
