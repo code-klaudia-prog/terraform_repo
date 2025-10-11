@@ -1,4 +1,4 @@
-# AWS ini-Infra Report
+# AWS Mini-Infra Report
 #### Objective 
 
 This project demonstrates the automated provisioning of a highly available network infrastructure in Amazon Web Services (AWS) using Terraform, managed via HashiCorp Cloud Platform (HCP) Terraform. The goal was to create a multi-AZ (Availability Zone) Virtual Private Cloud (VPC) with public and private subnets, outbound gateways, and security resources. The declarative source code, written in HCL (HashiCorp Configuration Language), is publicly accessible on GitHub at code-klaudia-prog. 
